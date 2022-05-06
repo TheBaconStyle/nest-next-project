@@ -3,8 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { RenderModule } from 'nest-next'
 import Next from 'next'
 import { AppController } from './app.controller'
-import { AuthModule } from './auth/auth.module'
-import { UserModel } from './user/user.model'
+// import { AuthModule } from './auth/auth.module'
+import { User } from './user/users.model'
+import { UserModule } from './user/users.module'
 
 @Module({
   imports: [
@@ -15,13 +16,13 @@ import { UserModel } from './user/user.model'
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: './database/data.db',
-      entities: [UserModel],
+      entities: [User],
       logging: process.env.NODE_ENV === 'development',
       synchronize: process.env.NODE_ENV === 'development',
     }),
-    AuthModule,
+    // AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
-  providers: [],
 })
 export class AppModule {}
