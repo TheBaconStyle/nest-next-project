@@ -1,16 +1,21 @@
-import { Injectable } from '@nestjs/common'
+import { User } from './../user/users.model'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { UserService } from '../user/users.service'
-// import { User } from '../user/users.model'
+import { compare } from 'bcrypt'
 
+const exceptionMessage = { message: 'oops username/login is incorrect' }
 @Injectable()
 export class AuthService {
   constructor(private readonly userService: UserService) {}
-  async validateUser(username: string, password: string): Promise<any> {
+  async logIn(username: string, password: string): Promise<User> {
     const user = await this.userService.findOne(username)
-    if (user && user.password === password) {
-      const { password, ...result } = user
-      return result
+    if (!user) {
+      throw new UnauthorizedException(exceptionMessage)
     }
-    return null
+    const isPasswordValid = compare(password, user.password)
+    if (!isPasswordValid) {
+      throw new UnauthorizedException(exceptionMessage)
+    }
+    return user
   }
 }
