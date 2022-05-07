@@ -16,7 +16,7 @@ export class User {
   password: string
 
   @Column({ default: false })
-  blocked: boolean
+  blocked?: boolean
 
   @BeforeInsert()
   async prepare() {

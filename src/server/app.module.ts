@@ -3,9 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { RenderModule } from 'nest-next'
 import Next from 'next'
 import { AppController } from './app.controller'
-// import { AuthModule } from './auth/auth.module'
-import { User } from './user/users.model'
-import { UserModule } from './user/users.module'
+import { User } from './user/users.entity'
 
 @Module({
   imports: [
@@ -20,8 +18,6 @@ import { UserModule } from './user/users.module'
       logging: process.env.NODE_ENV === 'development',
       synchronize: process.env.NODE_ENV === 'development',
     }),
-    // AuthModule,
-    UserModule,
   ],
   controllers: [AppController],
 })
