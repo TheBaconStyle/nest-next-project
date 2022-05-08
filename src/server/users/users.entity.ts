@@ -2,24 +2,24 @@ import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 import { hash } from 'bcrypt'
 
 @Entity('users')
-export class User {
+export class User implements UserData {
   @PrimaryGeneratedColumn('uuid')
   id?: string
 
-  @Column()
+  @Column({ unique: true, nullable: false })
   email: string
 
-  @Column()
-  username: string
+  @Column({ unique: true, nullable: false })
+  login: string
 
-  @Column()
+  @Column({ nullable: false })
   password: string
 
-  @Column({ default: false })
+  @Column({ default: false, nullable: false })
   blocked?: boolean
 
   @BeforeInsert()
-  async prepare() {
+  private async prepare() {
     this.password = await hash(this.password, 10)
   }
 }

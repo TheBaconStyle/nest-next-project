@@ -1,9 +1,10 @@
 import { Controller, Get, Render, Param, Post, Body } from '@nestjs/common'
-import { UserService } from './user/users.service'
+
+import { UsersService } from './users/users.service'
 
 @Controller()
 export class AppController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UsersService) {}
 
   @Get()
   @Render('index')

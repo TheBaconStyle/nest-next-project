@@ -1,9 +1,10 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { ISession } from 'connect-typeorm'
 
-@Entity('session')
-export class Session {
+@Entity('sessions')
+export class Session implements ISession {
   @PrimaryColumn()
-  id?: string
+  id: string
 
   @Column()
   expiredAt: number
