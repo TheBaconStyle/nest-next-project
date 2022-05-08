@@ -3,10 +3,9 @@ import colors from 'colors'
 import { TypeormStore } from 'connect-typeorm/out'
 import { Request } from 'express'
 import ExpressSession from 'express-session'
+import ms from 'ms'
 import { RenderService } from 'nest-next'
 import { getRepository } from 'typeorm'
-import ms from 'ms'
-
 import { AppModule } from './app.module'
 import { Session } from './session.entity'
 
@@ -21,16 +20,16 @@ async function bootstrap() {
   })
   app.use(
     ExpressSession({
-      // name: 'nest-next-proj',
+      name: 'nest-next-proj',
       secret: 'TOP_SECRET',
       saveUninitialized: false,
       resave: false,
-      store: new TypeormStore().connect(SessionRepo),
       cookie: {
         maxAge: ms('1m'),
         sameSite: true,
         httpOnly: true,
       },
+      store: new TypeormStore().connect(SessionRepo),
     }),
   )
   await app.listen(PORT, () => {

@@ -8,7 +8,7 @@ import { SignInStrategy } from './signin.strategy'
 import { SignUpStrategy } from './signup.strategy'
 
 @Module({
-  imports: [UsersModule, PassportModule],
+  imports: [UsersModule, PassportModule.register({ session: true })],
   providers: [AuthService, SignInStrategy, SignUpStrategy],
   controllers: [AuthController],
 })

@@ -17,7 +17,12 @@ export class UsersService {
   }
 
   async findByData({ email, login }: CheckUserExistDTO) {
-    return await this.UserRepo.findOne({ where: [{ login }, { email }] })
+    return await this.UserRepo.findOne({
+      where: [
+        { login, blocked: false },
+        { email, blocked: false },
+      ],
+    })
   }
 
   async findByEmail(email: string) {

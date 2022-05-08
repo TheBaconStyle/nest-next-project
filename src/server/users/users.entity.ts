@@ -2,7 +2,7 @@ import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 import { hash } from 'bcrypt'
 
 @Entity('users')
-export class User implements UserData {
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id?: string
 

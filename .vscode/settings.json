@@ -10,5 +10,6 @@
     "**/.vscode": false,
     "**/dist": true,
     "**/.next": true
-  }
+  },
+  "files.eol": "\n"
 }
