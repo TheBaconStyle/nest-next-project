@@ -7,9 +7,13 @@ import { AuthModule } from './auth/auth.module'
 import { Session } from './auth/session.entity'
 import { User } from './users/users.entity'
 import { UsersModule } from './users/users.module'
+import { JwtModule, JwtService } from '@nestjs/jwt'
 
 @Module({
   imports: [
+    JwtModule.register({
+      secret: process.env.SECRET_KEY,
+    }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: './database/data.db',
@@ -32,6 +36,7 @@ import { UsersModule } from './users/users.module'
     AuthModule,
     UsersModule,
   ],
+  providers: [JwtService],
   controllers: [AppController],
 
   exports: [],

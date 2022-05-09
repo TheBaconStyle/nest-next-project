@@ -27,6 +27,7 @@ export class AuthController {
   }
   @Get('qwe')
   qwe() {
-    return process.env.PORT
+    // return process.env.PORT
+    return 'qwe'
   }
 }
