@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { compare } from 'bcrypt'
 
 import { CreateUserDTO, ValidateUserDTO } from '../users/users.dto'
@@ -10,10 +11,7 @@ export class AuthService {
   async registerUser(newUserData: CreateUserDTO) {
     const candidate = await this.usersService.findByData(newUserData)
     if (!candidate) {
-      const { password, blocked, ...userData } = await this.usersService.create(
-        newUserData,
-      )
-      return userData
+      return await this.usersService.create(newUserData)
     }
     return null
   }
@@ -21,8 +19,7 @@ export class AuthService {
   async validateUser({ email, password }: ValidateUserDTO) {
     const candidate = await this.usersService.findByEmail(email)
     if (candidate && (await compare(password, candidate.password))) {
-      const { password, blocked, ...userData } = candidate
-      return userData
+      return candidate
     }
     return null
   }

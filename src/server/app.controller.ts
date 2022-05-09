@@ -19,9 +19,4 @@ export class AppController {
       title: param,
     }
   }
-
-  @Post('/user')
-  async createUser(@Body() body) {
-    return await this.userService.create(body)
-  }
 }
