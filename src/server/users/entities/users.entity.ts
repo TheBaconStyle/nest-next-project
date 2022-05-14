@@ -1,5 +1,13 @@
 import { hash } from 'bcrypt'
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
+import { Role } from './roles.entity'
 
 @Entity('users')
 export class User {
@@ -17,6 +25,10 @@ export class User {
 
   @Column({ default: false, nullable: false })
   blocked?: boolean
+
+  @ManyToMany(() => Role)
+  @JoinTable()
+  roles?: Role[]
 
   @BeforeInsert()
   private async prepare() {

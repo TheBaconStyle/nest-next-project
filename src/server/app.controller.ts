@@ -1,19 +1,11 @@
-import { Controller, Get, Render, Param } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-
-import { UsersService } from './users/users.service'
+import { Controller, Get, Param, Render } from '@nestjs/common'
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly userService: UsersService,
-    private readonly jwtService: JwtService,
-  ) {}
-
   @Get()
-  // @Render('index')
-  home() {
-    return this.jwtService.sign({ qwe: 123 })
+  @Render('index')
+  async home() {
+    return {}
   }
 
   @Get('/:abc')
