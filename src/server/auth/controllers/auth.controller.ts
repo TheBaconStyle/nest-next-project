@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common'
 import { Request, Response } from 'express'
 import ms from 'ms'
+import { UsersService } from 'src/server/users/services/users.service'
 import { AuthenticateGuard } from '../guards/authenticate.guard'
 import { RegisterGuard } from '../guards/register.guard'
 import { Role } from './../../users/entities/roles.entity'
@@ -24,6 +25,7 @@ interface SignInRequestMixin {
 
 @Controller()
 export class AuthController {
+  constructor(private readonly usersService: UsersService) {}
   @Post('signup')
   @UseGuards(RegisterGuard)
   rigisterUser() {
@@ -70,5 +72,7 @@ export class AuthController {
   }
 
   @Post('role')
-  createRole(@Body() body: Role) {}
+  createRole(@Body() body: Role) {
+    return this.usersService.createRole(body)
+  }
 }
