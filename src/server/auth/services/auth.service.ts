@@ -15,7 +15,7 @@ export class AuthService {
 
   async registerUser(newUserData: User) {
     const candidate = await this.usersService.findByData(newUserData)
-    if (!candidate) await this.usersService.create(newUserData)
+    if (!candidate) return await this.usersService.create(newUserData)
     return undefined
   }
 

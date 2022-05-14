@@ -11,7 +11,6 @@ export class RegisterStrategy extends PassportStrategy(Strategy, REGISTER) {
   constructor(private readonly authService: AuthService) {
     super()
   }
-
   async validate(req: Request<any, any, User>) {
     const registeredUser = await this.authService
       .registerUser(req.body)

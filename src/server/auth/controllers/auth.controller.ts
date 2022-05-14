@@ -1,3 +1,4 @@
+import { UsersService } from './../../users/services/users.service'
 import {
   Body,
   Controller,
@@ -14,6 +15,8 @@ import { AuthenticateGuard } from '../guards/authenticate.guard'
 import { RegisterGuard } from '../guards/register.guard'
 import { Role } from './../../users/entities/roles.entity'
 import { AuthorizeGuard } from './../guards/authorize.guard'
+import { AuthService } from '../services/auth.service'
+import { RoleGuard } from '../guards/role.guard'
 
 interface SignInRequestMixin {
   user: {
@@ -24,10 +27,15 @@ interface SignInRequestMixin {
 
 @Controller()
 export class AuthController {
+  constructor(
+    private readonly userService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
+
   @Post('signup')
   @UseGuards(RegisterGuard)
   rigisterUser() {
-    return 'Registered successfully!'
+    return { message: 'Registered successfully!' }
   }
 
   @Post('signin')
@@ -37,18 +45,30 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { accessToken, refreshToken } = req.user
-    res.cookie('refresh_token', refreshToken, {
+    res.cookie('token', refreshToken, {
       httpOnly: true,
-      maxAge: ms('30d') / 1000,
+      maxAge: ms('30d'),
       sameSite: true,
       signed: true,
     })
-    return { accessToken }
+    return { token: accessToken }
   }
 
   @Post('refresh')
-  refresh() {
-    return 'refreshed'
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.refreshUser(
+      req.signedCookies.token,
+    )
+    res.cookie('token', refreshToken, {
+      httpOnly: true,
+      maxAge: ms('30d'),
+      sameSite: true,
+      signed: true,
+    })
+    return { token: accessToken }
   }
 
   @Get('signin')
@@ -62,13 +82,14 @@ export class AuthController {
   }
 
   @Get('qwe')
-  @UseGuards(AuthorizeGuard)
+  @UseGuards(AuthorizeGuard, RoleGuard('ADMIN'))
   @Render('account')
   protectedRoute() {
-    // return process.env.PORT
     return 'udhaiuhwdhadhwa'
   }
 
   @Post('role')
-  createRole(@Body() body: Role) {}
+  async createRole(@Body() body: Role) {
+    return await this.userService.createRole(body)
+  }
 }

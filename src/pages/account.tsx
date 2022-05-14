@@ -1,3 +1,3 @@
 export default function Account() {
-  return <>account</>
+  return <div>account</div>
 }

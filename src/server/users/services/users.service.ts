@@ -11,14 +11,18 @@ export class UsersService {
     @InjectRepository(Role) private readonly RoleRepo: Repository<Role>,
   ) {}
 
-  async create({ email, login, password, roles = undefined }: User) {
+  async create({ email, login, password, roles = [] }: User) {
     const user = new User()
     user.email = email
     user.login = login
     user.password = password
-    if (!roles) {
+    if (roles.length !== 0) {
+      const roleNames = roles.map((role) => ({
+        name: role,
+      }))
+      const userRoles = await this.RoleRepo.find({ where: roleNames })
+      user.roles = userRoles
     }
-    user.roles = roles
     return await this.UserRepo.save(user)
   }
 
@@ -28,19 +32,30 @@ export class UsersService {
         { login, blocked: false },
         { email, blocked: false },
       ],
+      relations: ['roles'],
     })
   }
 
   async findByEmail(email: string) {
-    return await this.UserRepo.findOne({ where: { email, blocked: false } })
+    return await this.UserRepo.findOne({
+      where: { email, blocked: false },
+      relations: ['roles'],
+    })
   }
 
   async findById(id: string) {
-    return await this.UserRepo.findOne({ where: { id, blocked: false } })
+    return await this.UserRepo.findOne({
+      where: { id, blocked: false },
+      relations: ['roles'],
+    })
   }
 
   async findByLogin(login: string) {
-    return await this.UserRepo.findOne({ where: { login, blocked: false } })
+    return await this.UserRepo.findOne({
+      // select:['email','id','login','password','roles.name']
+      where: { login, blocked: false },
+      relations: ['roles'],
+    })
   }
 
   async createRole({ name }: Role) {
