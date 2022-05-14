@@ -1,4 +1,3 @@
-import { UsersService } from './../../users/services/users.service'
 import {
   Body,
   Controller,
@@ -11,13 +10,13 @@ import {
 } from '@nestjs/common'
 import { Request, Response } from 'express'
 import ms from 'ms'
-import { UsersService } from 'src/server/users/services/users.service'
 import { AuthenticateGuard } from '../guards/authenticate.guard'
 import { RegisterGuard } from '../guards/register.guard'
-import { Role } from './../../users/entities/roles.entity'
-import { AuthorizeGuard } from './../guards/authorize.guard'
-import { AuthService } from '../services/auth.service'
 import { RoleGuard } from '../guards/role.guard'
+import { AuthService } from '../services/auth.service'
+import { Role } from './../../users/entities/roles.entity'
+import { UsersService } from './../../users/services/users.service'
+import { AuthorizeGuard } from './../guards/authorize.guard'
 
 interface SignInRequestMixin {
   user: {
@@ -28,15 +27,10 @@ interface SignInRequestMixin {
 
 @Controller()
 export class AuthController {
-<<<<<<< HEAD
   constructor(
     private readonly userService: UsersService,
     private readonly authService: AuthService,
   ) {}
-
-=======
-  constructor(private readonly usersService: UsersService) {}
->>>>>>> d74b3cb949de096e7c4b7518c525b1628b8797cc
   @Post('signup')
   @UseGuards(RegisterGuard)
   rigisterUser() {
