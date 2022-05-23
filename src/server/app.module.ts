@@ -7,11 +7,8 @@ import Next from 'next'
 import { AppController } from './app.controller'
 import { AuthModule } from './auth/auth.module'
 import { Session } from './auth/entities/session.entity'
-<<<<<<< HEAD
-import { Role } from './users/entities/roles.entity'
-=======
 import { Role } from './roles/entities/roles.entity'
->>>>>>> master
+
 import { User } from './users/entities/users.entity'
 import { UsersModule } from './users/users.module'
 
@@ -35,10 +32,6 @@ import { UsersModule } from './users/users.module'
       type: 'sqlite',
       database: './database/data.db',
       entities: [User, Session, Role],
-<<<<<<< HEAD
-      // logging: process.env.NODE_ENV === 'development',
-=======
->>>>>>> master
       logging: false,
       synchronize: process.env.NODE_ENV === 'development',
     }),
