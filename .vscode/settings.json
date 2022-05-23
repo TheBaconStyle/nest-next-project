@@ -6,7 +6,11 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
+<<<<<<< HEAD
     "**/node_modules": true,
+=======
+    "**/node_modules": false,
+>>>>>>> master
     "**/.vscode": false,
     "**/dist": false,
     "**/.next": false
