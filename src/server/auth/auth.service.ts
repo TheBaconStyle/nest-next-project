@@ -96,7 +96,14 @@ export class AuthService {
       refreshToken: this.jwtService.sign({ user: user.id }),
     }
   }
-
+  checkRefreshToken(token: string) {
+    try {
+      this.jwtService.verify(token)
+      return true
+    } catch {
+      return false
+    }
+  }
   // private async logToSession(user: User, token: string) {
   //   const session = new Session()
   //   session.token =

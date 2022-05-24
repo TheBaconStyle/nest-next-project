@@ -1,4 +1,4 @@
-import { hash } from 'bcrypt'
+import bcrypt, { hash } from 'bcrypt'
 import {
   BeforeInsert,
   Column,
@@ -7,7 +7,6 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-
 import { Role } from '../../roles/entities/roles.entity'
 
 @Entity('users')
@@ -34,5 +33,9 @@ export class User {
   @BeforeInsert()
   private async prepare() {
     this.password = await hash(this.password, 10)
+  }
+
+  public async validatePassword(password) {
+    return await bcrypt.compare(password, this.password)
   }
 }

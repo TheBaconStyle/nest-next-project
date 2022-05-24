@@ -1,9 +1,9 @@
+import { UnautnenticatedGuard } from './guards/unauthenticated.guard'
 import {
   Body,
   Controller,
   Get,
   Headers,
-  Ip,
   Post,
   Render,
   Req,
@@ -15,7 +15,9 @@ import { Request, Response } from 'express'
 import ms from 'ms'
 import { RegisterUserDto } from 'src/server/users/dto/register.dto'
 import { CreateRoleDto } from '../roles/dto/create.dto'
+import { ReqUser } from '../shared/decorators/user.decorator'
 import { LoginUserDto } from './../users/dto/signin.dto'
+import { User } from './../users/entities/users.entity'
 import { AuthService } from './auth.service'
 import { AuthorizeGuard } from './guards/authorize.guard'
 import { RoleGuard } from './guards/role.guard'
@@ -36,10 +38,7 @@ export class AuthController {
   async authenticateUser(
     @Res({ passthrough: true }) res: Response,
     @Body() userDto: LoginUserDto,
-    @Headers('user-agent') userAgent: string,
   ) {
-    console.log(userAgent)
-
     const { accessToken, refreshToken } =
       await this.authService.authenticateUser(userDto)
     res.cookie('token', refreshToken, {
@@ -69,8 +68,9 @@ export class AuthController {
   }
 
   @Get('signin')
+  @UseGuards(UnautnenticatedGuard)
   @ApiExcludeEndpoint()
-  signInPage() {
+  signInPage(@Headers('user-agent') userAgent: string) {
     return 'SignInPage'
   }
 
@@ -82,7 +82,7 @@ export class AuthController {
 
   @Get('qwe')
   @ApiExcludeEndpoint()
-  @UseGuards(AuthorizeGuard, RoleGuard('ADMIN'))
+  @UseGuards(AuthorizeGuard)
   @Render('account')
   protectedRoute() {
     return 'udhaiuhwdhadhwa'

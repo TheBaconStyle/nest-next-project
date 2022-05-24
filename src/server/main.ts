@@ -21,7 +21,6 @@ async function bootstrap() {
   const service = app.get(RenderService)
   service.setErrorHandler(
     async (err: { response: { message: string } }, req, res: Response) => {
-      console.log(err)
       return res.send({ message: err.response.message })
     },
   )
