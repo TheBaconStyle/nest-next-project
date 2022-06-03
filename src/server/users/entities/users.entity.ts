@@ -1,3 +1,4 @@
+import { Session } from './../../auth/entities/session.entity'
 import bcrypt, { hash } from 'bcrypt'
 import {
   BeforeInsert,
@@ -5,6 +6,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Role } from '../../roles/entities/roles.entity'
@@ -29,6 +31,9 @@ export class User {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[]
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[]
 
   @BeforeInsert()
   private async prepare() {

@@ -18,12 +18,12 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document)
   const appConfig = app.get(ConfigService)
   app.use(cookieParser(appConfig.get('COOKIE_SECRET')))
-  const service = app.get(RenderService)
-  service.setErrorHandler(
-    async (err: { response: { message: string } }, req, res: Response) => {
-      return res.send({ message: err.response.message })
-    },
-  )
+  // const service = app.get(RenderService)
+  // service.setErrorHandler(
+  //   async (err: { response: { message: string } }, req, res: Response) => {
+  //     return res.send('Smth gone wrong')
+  //   },
+  // )
   const PORT = appConfig.get('PORT')
   await app.listen(PORT, () => {
     console.log(colors.green(`Server started at http://localhost:${PORT}`))

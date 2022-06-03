@@ -8,8 +8,9 @@
     "**/Thumbs.db": true,
     "**/node_modules": true,
     "**/.vscode": false,
-    "**/dist": false,
-    "**/.next": false
+    "**/dist": true,
+    "**/.next": true,
+    "**/.yarn": true
   },
   "files.eol": "\n"
 }

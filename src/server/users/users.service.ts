@@ -1,5 +1,5 @@
 import { FindUserDto } from 'src/server/users/dto/find.dto'
-import { RegisterUserDto } from './dto/register.dto'
+import { RegisterUserDto } from '../auth/dto/register.dto'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'

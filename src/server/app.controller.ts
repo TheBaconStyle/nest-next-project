@@ -1,5 +1,14 @@
-import { Controller, Get, Param, Render } from '@nestjs/common'
-
+import { MulterHelper } from './multer.helper'
+import { diskStorage } from 'multer'
+import {
+  Controller,
+  Get,
+  Post,
+  Render,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiExcludeController } from '@nestjs/swagger'
 
 @Controller()
@@ -11,11 +20,16 @@ export class AppController {
     return {}
   }
 
-  @Get('/:abc')
-  @Render('Qwe')
-  qwe(@Param('abc') param: string) {
-    return {
-      title: param,
-    }
+  @Post('/qwe')
+  @UseInterceptors(
+    FileInterceptor('qwe', {
+      storage: diskStorage({
+        destination: MulterHelper.createDestination('facilities'),
+        filename: MulterHelper.createFileName(),
+      }),
+    }),
+  )
+  async file(@UploadedFile() file) {
+    return 'OK'
   }
 }

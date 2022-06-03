@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { User } from 'src/server/users/entities/users.entity'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 @Entity('sessions')
 export class Session {
@@ -10,4 +17,7 @@ export class Session {
 
   @Column()
   userAgent: string
+
+  @ManyToOne(() => User, (user) => user.sessions)
+  user: User
 }

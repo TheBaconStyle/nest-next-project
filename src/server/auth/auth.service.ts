@@ -1,8 +1,8 @@
 import { Session } from './entities/session.entity'
 import { CreateRoleDto } from '../roles/dto/create.dto'
 import { RolesService } from './../roles/roles.service'
-import { LoginUserDto } from './../users/dto/signin.dto'
-import { RegisterUserDto } from 'src/server/users/dto/register.dto'
+import { LoginUserDto } from './dto/signin.dto'
+import { RegisterUserDto } from './dto/register.dto'
 import {
   BadRequestException,
   Injectable,
@@ -96,6 +96,7 @@ export class AuthService {
       refreshToken: this.jwtService.sign({ user: user.id }),
     }
   }
+
   checkRefreshToken(token: string) {
     try {
       this.jwtService.verify(token)
@@ -104,8 +105,15 @@ export class AuthService {
       return false
     }
   }
-  // private async logToSession(user: User, token: string) {
-  //   const session = new Session()
-  //   session.token =
-  // }
+
+  private async logSession(
+    user: User,
+    refreshToken: string,
+    userAgent: string,
+  ) {
+    const session = new Session()
+    session.token = refreshToken
+    session.user = user
+    return await this.sessionRepo.save(session)
+  }
 }

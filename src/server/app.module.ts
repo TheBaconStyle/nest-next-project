@@ -1,19 +1,24 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { RouterModule } from '@nestjs/core'
+import { ServeStaticModule } from '@nestjs/serve-static'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RenderModule } from 'nest-next'
 import Next from 'next'
+import { join } from 'path'
 import { AppController } from './app.controller'
 import { AuthModule } from './auth/auth.module'
 import { Session } from './auth/entities/session.entity'
 import { Role } from './roles/entities/roles.entity'
-
 import { User } from './users/entities/users.entity'
 import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/public',
+    }),
     RenderModule.forRootAsync(
       Next({
         conf: {
@@ -30,7 +35,7 @@ import { UsersModule } from './users/users.module'
     ),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: './database/data.db',
+      database: join(__dirname, '..', 'database', 'data.db'),
       entities: [User, Session, Role],
       logging: false,
       synchronize: process.env.NODE_ENV === 'development',
