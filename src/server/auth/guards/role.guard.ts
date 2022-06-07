@@ -1,8 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   mixin,
-  UnauthorizedException,
 } from '@nestjs/common'
 
 export function RoleGuard(...roles: string[]) {
@@ -14,7 +14,7 @@ export function RoleGuard(...roles: string[]) {
         const pass = roles.every((rolename) =>
           req.user.roles.map((role) => role.name).includes(rolename),
         )
-        if (!pass) throw new UnauthorizedException()
+        if (!pass) throw new ForbiddenException()
       }
     },
   )

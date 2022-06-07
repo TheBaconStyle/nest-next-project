@@ -1,27 +1,24 @@
-import { AuthService } from './../auth.service'
-import { Request, Response } from 'express'
-import { User } from './../../users/entities/users.entity'
-import { AuthGuard } from '@nestjs/passport'
-import { AUTHORIZE } from './../shared/auth.constants'
+import { Response } from 'express'
 import { ExecutionContext, Injectable } from '@nestjs/common'
-import { Observable } from 'rxjs'
+import { AuthGuard } from '@nestjs/passport'
+import { User } from '../entities/users.entity'
+import { AuthService } from '../services/auth.service'
+import { AUTHORIZE } from './../shared/auth.constants'
 
 @Injectable()
 export class UnautnenticatedGuard extends AuthGuard(AUTHORIZE) {
   constructor(private readonly authService: AuthService) {
     super()
   }
+
   handleRequest<TUser = User>(
     err: any,
     user: TUser,
     info: any,
     context: ExecutionContext,
   ) {
-    const ctx = context.switchToHttp()
-    const req: Request = ctx.getRequest()
-    const res: Response = ctx.getResponse()
-    const token = req.signedCookies.token
-    if (this.authService.checkRefreshToken(token)) {
+    const res: Response = context.switchToHttp().getResponse()
+    if (user) {
       return res.redirect('/')
     }
     return user

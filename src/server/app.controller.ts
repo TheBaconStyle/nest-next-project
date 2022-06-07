@@ -1,15 +1,16 @@
-import { MulterHelper } from './multer.helper'
-import { diskStorage } from 'multer'
 import {
   Controller,
   Get,
   Post,
   Render,
-  UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiExcludeController } from '@nestjs/swagger'
+import { diskStorage } from 'multer'
+import { AuthorizeGuard } from './auth/guards/authorize.guard'
+import { MulterHelper } from './shared/utils/multer.helper'
 
 @Controller()
 @ApiExcludeController()
@@ -29,7 +30,14 @@ export class AppController {
       }),
     }),
   )
-  async file(@UploadedFile() file) {
+  async file() {
     return 'OK'
+  }
+
+  @Get('account')
+  @UseGuards(AuthorizeGuard)
+  @Render('account')
+  protectedRoute() {
+    return 'udhaiuhwdhadhwa'
   }
 }

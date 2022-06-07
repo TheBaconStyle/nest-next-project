@@ -8,10 +8,9 @@ import Next from 'next'
 import { join } from 'path'
 import { AppController } from './app.controller'
 import { AuthModule } from './auth/auth.module'
-import { Session } from './auth/entities/session.entity'
-import { Role } from './roles/entities/roles.entity'
-import { User } from './users/entities/users.entity'
-import { UsersModule } from './users/users.module'
+import { Session } from './auth/entities/sessions.entity'
+import { Role } from './auth/entities/roles.entity'
+import { User } from './auth/entities/users.entity'
 
 @Module({
   imports: [
@@ -42,8 +41,7 @@ import { UsersModule } from './users/users.module'
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
-    UsersModule,
-    RouterModule.register([{ path: '/auth', module: AuthModule }]),
+    // RouterModule.register([{ path: '/auth', module: AuthModule }]),
   ],
   controllers: [AppController],
 })

@@ -1,4 +1,5 @@
-import { Session } from './../../auth/entities/session.entity'
+import { RegisterDto } from './../dto/register-user.dto'
+import { Session } from './sessions.entity'
 import bcrypt, { hash } from 'bcrypt'
 import {
   BeforeInsert,
@@ -9,10 +10,18 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Role } from '../../roles/entities/roles.entity'
+import { Role } from './roles.entity'
 
 @Entity('users')
 export class User {
+  constructor(dto?: RegisterDto) {
+    if (dto) {
+      this.email = dto.email
+      this.password = dto.password
+      this.login = dto.login
+    }
+  }
+
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -26,7 +35,7 @@ export class User {
   password: string
 
   @Column({ default: false, nullable: false })
-  blocked?: boolean
+  blocked: boolean
 
   @ManyToMany(() => Role)
   @JoinTable()

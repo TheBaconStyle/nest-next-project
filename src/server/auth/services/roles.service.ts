@@ -1,6 +1,6 @@
-import { FindRoleDto } from './dto/find.dto'
-import { CreateRoleDto } from './dto/create.dto'
-import { Role } from './entities/roles.entity'
+import { FindRoleDto } from '../dto/find.dto'
+import { CreateRoleDto } from '../dto/create-role.dto'
+import { Role } from '../entities/roles.entity'
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -16,6 +16,7 @@ export class RolesService {
     role.name = roleDto.name
     return await this.RoleRepo.save(role)
   }
+
   async findOne(name: string) {
     return await this.RoleRepo.findOne({ where: { name } })
   }

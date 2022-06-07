@@ -1,9 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Request } from 'express'
 import { Strategy } from 'passport-custom'
-import { AuthService } from '../auth.service'
+import { AuthService } from '../services/auth.service'
 import { AUTHORIZE } from '../shared/auth.constants'
+import { IReqFingerprint } from './../../shared/types/req-fingerprint.type'
 
 @Injectable()
 export class AuthorizeStrategy extends PassportStrategy(Strategy, AUTHORIZE) {
@@ -11,12 +11,7 @@ export class AuthorizeStrategy extends PassportStrategy(Strategy, AUTHORIZE) {
     super()
   }
 
-  async validate(req: Request) {
-    try {
-      const token = req.headers.authorization.split(' ')[1]
-      return await this.authService.authorizeUser(token)
-    } catch {
-      throw new UnauthorizedException('Token is not valid.')
-    }
+  async validate(req: IReqFingerprint) {
+    return await this.authService.authorizeUser(req.fingerprint.hash)
   }
 }
