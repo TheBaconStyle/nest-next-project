@@ -1,14 +1,15 @@
-import Fingerprint, {
-  useragent,
-  acceptHeaders,
-  ip,
-} from '@shwao/express-fingerprint'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import Fingerprint, {
+  acceptHeaders,
+  ip,
+  useragent,
+} from '@shwao/express-fingerprint'
 import colors from 'colors'
-import { Response, Request } from 'express'
+import { Request, Response } from 'express'
 import { RenderService } from 'nest-next'
+import passport from 'passport'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
@@ -19,9 +20,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .build()
   const document = SwaggerModule.createDocument(app, config)
+  app.use(Fingerprint({ parameters: [useragent, acceptHeaders, ip] }))
+  app.use('/api/docs', passport.authorize('AUTH_AUTHORIZE'))
   SwaggerModule.setup('api/docs', app, document)
   const appConfig = app.get(ConfigService)
-  app.use(Fingerprint({ parameters: [useragent, acceptHeaders, ip] }))
   const service = app.get(RenderService)
   service.setErrorHandler(
     async (
@@ -29,7 +31,7 @@ async function bootstrap() {
       req: Request,
       res: Response,
     ) => {
-      if (req.path.includes('/api') || req.method !== 'GET') {
+      if (req.path.includes('/api') && req.body) {
         if (process.env.NODE_ENV === 'development') console.log(err)
         if (err.response.message) {
           return res.send({ message: err.response.message })
