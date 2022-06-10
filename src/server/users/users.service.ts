@@ -1,16 +1,14 @@
-import { FindUserDto } from 'src/server/auth/dto/find-user.dto'
-import { RegisterDto } from '../dto/register-user.dto'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { FindUserDto } from 'src/server/users/dto/find-user.dto'
 import { Repository } from 'typeorm'
-import { Role } from '../entities/roles.entity'
-import { User } from '../entities/users.entity'
+import { RegisterDto } from '../auth/dto/register-user.dto'
+import { User } from './entities/users.entity'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly UserRepo: Repository<User>,
-    @InjectRepository(Role) private readonly RoleRepo: Repository<Role>,
   ) {}
 
   async create(registerUserDto: RegisterDto) {

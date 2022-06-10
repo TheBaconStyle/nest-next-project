@@ -1,4 +1,4 @@
-import { CreateRoleDto } from './../dto/create-role.dto'
+import { CreateRoleDto } from '../dto/create-role.dto'
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('roles')

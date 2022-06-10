@@ -8,7 +8,7 @@ import { FingerprintData } from '@shwao/express-fingerprint'
 import { RegisterDto } from '../dto/register-user.dto'
 import { SignInDto } from '../dto/signin-user.dto'
 import { SessionsService } from './sessions.service'
-import { UsersService } from './users.service'
+import { UsersService } from '../../users/users.service'
 
 @Injectable()
 export class AuthService {
@@ -35,11 +35,11 @@ export class AuthService {
     { email, password }: SignInDto,
     fingerprint: FingerprintData,
   ) {
-    const candidate = await this.usersService.findOne({ email }).catch(() => {
-      throw new UnauthorizedException('User with this email is not exist.')
-    })
+    const candidate = await this.usersService.findOne({ email })
+    if (!candidate)
+      throw new UnauthorizedException('User with this email does not exist.')
     const isPasswordValid = await candidate.validatePassword(password)
-    if (candidate && isPasswordValid) {
+    if (isPasswordValid) {
       const useragent = fingerprint.components.useragent
       return await this.sessionsService.create({
         user: candidate,
@@ -53,9 +53,10 @@ export class AuthService {
   }
 
   async authorizeUser(hash: string) {
-    const session = await this.sessionsService.findOne(hash).catch(() => {
-      throw new InternalServerErrorException('User was not found.')
-    })
+    const session = await this.sessionsService.findOne(hash)
+    if (!session) {
+      throw new UnauthorizedException()
+    }
     return session.user
   }
 

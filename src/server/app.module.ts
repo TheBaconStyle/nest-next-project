@@ -1,6 +1,7 @@
+import { UsersModule } from './users/users.module'
+import { Booking } from './bookings/entities/bookings.entity'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { RouterModule } from '@nestjs/core'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RenderModule } from 'nest-next'
@@ -8,9 +9,10 @@ import Next from 'next'
 import { join } from 'path'
 import { AppController } from './app.controller'
 import { AuthModule } from './auth/auth.module'
+import { Role } from './roles/entities/roles.entity'
 import { Session } from './auth/entities/sessions.entity'
-import { Role } from './auth/entities/roles.entity'
-import { User } from './auth/entities/users.entity'
+import { User } from './users/entities/users.entity'
+import { BookingsModule } from './bookings/bookings.module'
 
 @Module({
   imports: [
@@ -35,13 +37,14 @@ import { User } from './auth/entities/users.entity'
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: join(__dirname, '..', 'database', 'data.db'),
-      entities: [User, Session, Role],
+      entities: [User, Session, Role, Booking],
       logging: false,
       synchronize: process.env.NODE_ENV === 'development',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
-    // RouterModule.register([{ path: '/auth', module: AuthModule }]),
+    BookingsModule,
+    UsersModule,
   ],
   controllers: [AppController],
 })

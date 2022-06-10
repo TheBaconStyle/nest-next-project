@@ -1,4 +1,4 @@
-import { User } from 'src/server/auth/entities/users.entity'
+import { User } from 'src/server/users/entities/users.entity'
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
 import { CreateSessionDto } from './../dto/create-session.dto'
 

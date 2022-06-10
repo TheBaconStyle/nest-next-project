@@ -9,7 +9,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiExcludeController } from '@nestjs/swagger'
 import { diskStorage } from 'multer'
-import { AuthorizeGuard } from './auth/guards/authorize.guard'
+import { AuthorizedGuard } from './auth/guards/authorize.guard'
 import { MulterHelper } from './shared/utils/multer.helper'
 
 @Controller()
@@ -35,7 +35,7 @@ export class AppController {
   }
 
   @Get('account')
-  @UseGuards(AuthorizeGuard)
+  @UseGuards(AuthorizedGuard)
   @Render('account')
   protectedRoute() {
     return 'udhaiuhwdhadhwa'

@@ -27,13 +27,13 @@ export class AuthAPIController {
     return 'Successfully signed in!'
   }
 
-  @Post('signout')
-  async singout(@Req() req: IReqFingerprint) {
+  @Get('signout')
+  async signout(@Req() req: IReqFingerprint) {
     await this.authService.deauthenticateUser(req.fingerprint.hash)
     return 'Signed out'
   }
 
-  @Get('check')
+  @Get('/')
   @UseGuards(UnautnenticatedGuard)
   async check() {
     return 'OK'

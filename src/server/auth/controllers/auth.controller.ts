@@ -1,4 +1,4 @@
-import { AuthorizeGuard } from './../guards/authorize.guard'
+import { AuthorizedGuard } from './../guards/authorize.guard'
 import { Controller, Get, Headers, Req, UseGuards } from '@nestjs/common'
 import { ApiExcludeController } from '@nestjs/swagger'
 import { IReqFingerprint } from '../../shared/types/req-fingerprint.type'
@@ -20,7 +20,7 @@ export class AuthController {
   }
 
   @Get('/')
-  @UseGuards(AuthorizeGuard)
+  @UseGuards(AuthorizedGuard)
   async qwe(@Req() req: IReqFingerprint) {
     const userAgent = req.fingerprint.components.useragent
     return `U send request from ${userAgent.browser.family} on ${userAgent.os.family} ${req.fingerprint.hash}`

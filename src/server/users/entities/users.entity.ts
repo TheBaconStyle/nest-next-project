@@ -1,5 +1,3 @@
-import { RegisterDto } from './../dto/register-user.dto'
-import { Session } from './sessions.entity'
 import bcrypt, { hash } from 'bcrypt'
 import {
   BeforeInsert,
@@ -10,7 +8,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Role } from './roles.entity'
+import { Booking } from '../../bookings/entities/bookings.entity'
+import { RegisterDto } from '../../auth/dto/register-user.dto'
+import { Role } from '../../roles/entities/roles.entity'
+import { Session } from '../../auth/entities/sessions.entity'
 
 @Entity('users')
 export class User {
@@ -43,6 +44,9 @@ export class User {
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[]
+
+  @OneToMany(() => Booking, (booking) => booking.user)
+  bookings: Booking[]
 
   @BeforeInsert()
   private async prepare() {
