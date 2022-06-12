@@ -12,8 +12,7 @@ export class RolesService {
   ) {}
 
   async create(roleDto: CreateRoleDto) {
-    const role = new Role()
-    role.name = roleDto.name
+    const role = new Role(roleDto)
     return await this.RoleRepo.save(role)
   }
 
@@ -25,17 +24,8 @@ export class RolesService {
     return await this.RoleRepo.find({ where: roleDtos })
   }
 
-  async delete(name: string) {
-    return await this.RoleRepo.createQueryBuilder('role')
-      .delete()
-      .where('roel.name  = :name', { name })
-      .execute()
-      .then((res) => res)
-      .catch(() => {
-        throw new InternalServerErrorException({
-          message: 'oops!  smth gone wrong',
-        })
-      })
+  async delete(roles: Role[]) {
+    return await this.RoleRepo.softRemove(roles)
   }
 
   async update(name: string, opts) {
@@ -50,5 +40,39 @@ export class RolesService {
           message: 'oops! smth gone wrong',
         })
       })
+  }
+
+  async createRootRole() {
+    const variant = await this.RoleRepo.findOne({ priority: 0 })
+    if (variant) return variant
+    const rootRole = new Role()
+    rootRole.name = 'root'
+    rootRole.priority = 0
+    rootRole.haveDashboardAccess = true
+    rootRole.haveDocsAccess = true
+    rootRole.haveArticlesAccess = true
+    rootRole.canAddArticles = true
+    rootRole.canEditArticles = true
+    rootRole.canDeleteArticles = true
+    rootRole.haveBookingsAccess = true
+    rootRole.canAddBookings = true
+    rootRole.canDeleteBookings = true
+    rootRole.haveCategoriesAccess = true
+    rootRole.canAddCategories = true
+    rootRole.canEditCategories = true
+    rootRole.canDeleteCategories = true
+    rootRole.haveFacilitiesAccess = true
+    rootRole.canAddFacilities = true
+    rootRole.canEditFacilities = true
+    rootRole.canDeleteFacilities = true
+    rootRole.haveRolesAccess = true
+    rootRole.canAddRoles = true
+    rootRole.canEditRoles = true
+    rootRole.canDeleteRoles = true
+    rootRole.haveUsersAccess = true
+    rootRole.canAddUsers = true
+    rootRole.canEditUsers = true
+    rootRole.canDeleteUsers = true
+    return await this.RoleRepo.save(rootRole)
   }
 }

@@ -2,6 +2,7 @@ import bcrypt, { hash } from 'bcrypt'
 import {
   BeforeInsert,
   Column,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -26,7 +27,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true, nullable: true })
   email: string
 
   @Column({ unique: true, nullable: false })
@@ -47,6 +48,9 @@ export class User {
 
   @OneToMany(() => Booking, (booking) => booking.user)
   bookings: Booking[]
+
+  @DeleteDateColumn()
+  deletedAt: Date
 
   @BeforeInsert()
   private async prepare() {

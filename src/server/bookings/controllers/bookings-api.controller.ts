@@ -1,12 +1,14 @@
 import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common'
-import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { RoleGuard } from 'src/server/auth/guards/role.guard'
+import { ApiTags } from '@nestjs/swagger'
+import { havePermissions } from 'src/server/shared/utils/identify-permissions.helper'
 import { User } from 'src/server/users/entities/users.entity'
+import { FindBookDto } from '../dto/find-book.dto'
 import { AuthorizedGuard } from './../../auth/guards/authorize.guard'
 import { ReqUser } from './../../shared/decorators/user.decorator'
+import { FindPageDto } from './../../shared/types/find-page.type'
 import { BookingsService } from './../bookings.service'
 import { CreateBookDto } from './../dto/create-book.dto'
-import roles from '../../shared/roles/roles.json'
+
 @Controller('/api/bookings')
 @UseGuards(AuthorizedGuard)
 @ApiTags('bookings')
@@ -24,11 +26,17 @@ export class BookingsAPIController {
   }
 
   @Get('/')
-  async getBooks(@ReqUser() user: User, @Body() body: any) {
-    return { user, body }
+  async getBooks(
+    @ReqUser() user: User,
+    @Body() { facilityId, page, pageSize }: FindPageDto & FindBookDto,
+  ) {
+    const pass = await havePermissions(user, {
+      haveDashboardAccess: true,
+      haveBookingsAccess: true,
+    })
+    return pass
   }
 
   @Delete('/')
-  @UseGuards(RoleGuard(roles.ADMIN))
-  async cancelBook() {}
+  async cancelBook(@ReqUser() user: User, @Body() body: { id: string }) {}
 }

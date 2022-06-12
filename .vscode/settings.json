@@ -12,5 +12,6 @@
     "**/.next": true,
     "**/.yarn": true
   },
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "cSpell.words": ["dtos"]
 }

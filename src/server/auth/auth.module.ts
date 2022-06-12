@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Role } from '../roles/entities/roles.entity'
@@ -20,7 +19,7 @@ import { AuthorizeStrategy } from './strategies/authorize.strategy'
     RolesModule,
   ],
   controllers: [AuthController, AuthAPIController],
-  providers: [AuthService, AuthorizeStrategy, ConfigService, SessionsService],
+  providers: [AuthService, AuthorizeStrategy, SessionsService],
   exports: [AuthService, SessionsService],
 })
 export class AuthModule {}

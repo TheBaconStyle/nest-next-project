@@ -32,14 +32,13 @@ export class AuthService {
   }
 
   async authenticateUser(
-    { email, password }: SignInDto,
+    { login, password }: SignInDto,
     fingerprint: FingerprintData,
   ) {
-    const candidate = await this.usersService.findOne({ email })
+    const candidate = await this.usersService.findOne({ login })
     if (!candidate)
-      throw new UnauthorizedException('User with this email does not exist.')
-    const isPasswordValid = await candidate.validatePassword(password)
-    if (isPasswordValid) {
+      throw new UnauthorizedException('User with this login does not exist.')
+    if (await candidate.validatePassword(password)) {
       const useragent = fingerprint.components.useragent
       return await this.sessionsService.create({
         user: candidate,

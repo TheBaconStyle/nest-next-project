@@ -1,13 +1,12 @@
-import { Response } from 'express'
 import { ExecutionContext, Injectable } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+import { Response } from 'express'
 import { User } from '../../users/entities/users.entity'
-import { AuthService } from '../services/auth.service'
 import { AUTHORIZE } from './../shared/auth.constants'
 
 @Injectable()
 export class UnautnenticatedGuard extends AuthGuard(AUTHORIZE) {
-  constructor(private readonly authService: AuthService) {
+  constructor() {
     super()
   }
 

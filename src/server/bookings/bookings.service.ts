@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { User } from 'src/server/users/entities/users.entity'
 import { Repository } from 'typeorm'
-import { GetPageQueryDto } from './../shared/dto/get-page.dto'
+import { FindPageDto } from './../shared/types/find-page.type'
 import { CreateBookDto } from './dto/create-book.dto'
-import { FindBookDto } from './dto/find-book.dto'
 import { Booking } from './entities/bookings.entity'
 
 @Injectable()
@@ -18,22 +18,50 @@ export class BookingsService {
     return await this.bookingRepo.save(book)
   }
 
-  async find(
-    conditions?: FindBookDto[] | FindBookDto,
-    options?: GetPageQueryDto,
-  ) {
-    // return await this.bookingRepo.find({
-    //   where: conditions,
-    //   relations: ['user'],
-    //   skip: (options.page - 1) * options.size,
-    //   take: options.size,
-    // })
-    return await this.bookingRepo.count()
+  async findForDashboard({ page, pageSize }: FindPageDto) {
+    return await this.bookingRepo.find({
+      skip: (page > 0 ? page : 0) * pageSize,
+      take: pageSize,
+      order: {
+        from: 'ASC',
+      },
+    })
   }
 
-  async delete(dto: FindBookDto) {
-    return await this.bookingRepo.delete(dto)
+  async findByFacility(facilityId: string) {
+    return await this.bookingRepo.find({
+      order: {
+        from: 'ASC',
+      },
+      where: { facility: { id: facilityId } },
+    })
   }
 
-  async findPage() {}
+  async findByFacilityForUser(user: User, facilityId: string) {
+    return await this.bookingRepo.find({
+      order: {
+        from: 'ASC',
+      },
+      where: { facility: { id: facilityId }, user },
+    })
+  }
+
+  // async findById(id: string, { page, pageSize }: FindPageDto) {
+  //   return await this.bookingRepo.find({
+  //     skip: (page > 0 ? page : 0) * pageSize,
+  //     take: pageSize,
+  //     order: {
+  //       from: 'ASC',
+  //     },
+  //     where: { id },
+  //   })
+  // }
+
+  async canBook(user: User) {
+    return (await this.bookingRepo.count({ where: { user } })) <= 5
+  }
+
+  async deleteById(id: string) {
+    return await this.bookingRepo.delete({ id })
+  }
 }

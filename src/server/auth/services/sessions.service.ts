@@ -1,3 +1,4 @@
+import { UsersService } from './../../users/users.service'
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
@@ -10,6 +11,7 @@ export class SessionsService {
   constructor(
     @InjectRepository(Session)
     private readonly sessionRepo: Repository<Session>,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(sessionDto: CreateSessionDto) {
@@ -20,7 +22,7 @@ export class SessionsService {
   async findOne(hash: string) {
     return await this.sessionRepo.findOne({
       where: { hash },
-      relations: ['user'],
+      relations: ['user', 'user.roles'],
     })
   }
 

@@ -1,3 +1,5 @@
+import { UsersService } from './users/users.service'
+import { RolesService } from './roles/roles.service'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
@@ -41,6 +43,12 @@ async function bootstrap() {
       return res.render('404')
     },
   )
+
+  const rolesService = app.get(RolesService)
+  const rootRole = await rolesService.createRootRole()
+  const usersService = app.get(UsersService)
+  usersService.createRootUser(rootRole)
+
   const PORT = appConfig.get('PORT')
   await app.listen(PORT, () => {
     console.log(colors.green(`Server started at http://localhost:${PORT}`))

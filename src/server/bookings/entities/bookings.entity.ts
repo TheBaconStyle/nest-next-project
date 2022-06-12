@@ -1,5 +1,12 @@
+import { Facility } from './../../facilities/entities/facilities.entity'
 import { User } from 'src/server/users/entities/users.entity'
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import { CreateBookDto } from '../dto/create-book.dto'
 
 @Entity('bookings')
@@ -23,4 +30,10 @@ export class Booking {
 
   @ManyToOne(() => User, (user) => user.bookings)
   user: User
+
+  @ManyToOne(() => Facility, (facility) => facility.bookings)
+  facility: Facility
+
+  @DeleteDateColumn()
+  deletedAt: Date
 }
