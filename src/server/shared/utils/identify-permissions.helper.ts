@@ -58,7 +58,6 @@ export async function havePermissions(
   user: User,
   permissions: RolePermissions,
 ) {
-  console.log(user)
   return Object.entries(permissions).every(([key, value]) => {
     return user.roles.some((role) => role[key] === value)
   })

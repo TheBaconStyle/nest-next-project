@@ -1,5 +1,6 @@
+import { RolesService } from './../roles/roles.service'
 import { ConfigService } from '@nestjs/config'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindUserDto } from 'src/server/users/dto/find-user.dto'
 import { Repository } from 'typeorm'
@@ -11,11 +12,22 @@ import { Role } from '../roles/entities/roles.entity'
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly rolesService: RolesService,
     private readonly configService: ConfigService,
   ) {}
 
   async create(registerUserDto: RegisterDto) {
+    const { email, login } = registerUserDto
+    const candidate = await this.userRepo.findOne({
+      where: [{ email }, { login }],
+    })
+    if (candidate)
+      throw new BadRequestException(
+        'User with this email/login already exists.',
+      )
     const user = new User(registerUserDto)
+    const basicRole = await this.rolesService.findByName('BASIC')
+    user.roles = [basicRole]
     return await this.userRepo.save(user)
   }
 

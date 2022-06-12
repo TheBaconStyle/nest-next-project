@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from 'src/server/users/entities/users.entity'
-import { Repository } from 'typeorm'
+import { MoreThan, Repository } from 'typeorm'
 import { FindPageDto } from './../shared/types/find-page.type'
 import { CreateBookDto } from './dto/create-book.dto'
 import { Booking } from './entities/bookings.entity'
@@ -28,34 +28,25 @@ export class BookingsService {
     })
   }
 
-  async findByFacility(facilityId: string) {
+  async findByFacility(facilityId: string, pageOpts?: FindPageDto) {
     return await this.bookingRepo.find({
       order: {
         from: 'ASC',
       },
-      where: { facility: { id: facilityId } },
+      where: { facility: { id: facilityId }, from: MoreThan(new Date()) },
     })
   }
 
-  async findByFacilityForUser(user: User, facilityId: string) {
+  async findByDate(date: Date, { page, pageSize }: FindPageDto) {
     return await this.bookingRepo.find({
+      skip: (page > 0 ? page : 0) * pageSize,
+      take: pageSize,
       order: {
         from: 'ASC',
       },
-      where: { facility: { id: facilityId }, user },
+      where: [{ from: date }, { to: date }],
     })
   }
-
-  // async findById(id: string, { page, pageSize }: FindPageDto) {
-  //   return await this.bookingRepo.find({
-  //     skip: (page > 0 ? page : 0) * pageSize,
-  //     take: pageSize,
-  //     order: {
-  //       from: 'ASC',
-  //     },
-  //     where: { id },
-  //   })
-  // }
 
   async canBook(user: User) {
     return (await this.bookingRepo.count({ where: { user } })) <= 5

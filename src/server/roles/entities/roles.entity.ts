@@ -21,82 +21,82 @@ export class Role {
   @Column({ unique: true, nullable: false })
   name: string
 
-  @Column()
+  @Column({})
   priority: number
 
-  @Column()
+  @Column({ default: false })
   haveDashboardAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   haveDocsAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   haveCategoriesAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   canAddCategories: boolean
 
-  @Column()
+  @Column({ default: false })
   canEditCategories: boolean
 
-  @Column()
+  @Column({ default: false })
   canDeleteCategories: boolean
 
-  @Column()
+  @Column({ default: false })
   haveFacilitiesAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   canAddFacilities: boolean
 
-  @Column()
+  @Column({ default: false })
   canEditFacilities: boolean
 
-  @Column()
+  @Column({ default: false })
   canDeleteFacilities: boolean
 
-  @Column()
+  @Column({ default: false })
   haveRolesAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   canAddRoles: boolean
 
-  @Column()
+  @Column({ default: false })
   canEditRoles: boolean
 
-  @Column()
+  @Column({ default: false })
   canDeleteRoles: boolean
 
-  @Column()
+  @Column({ default: false })
   haveUsersAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   canAddUsers: boolean
 
-  @Column()
+  @Column({ default: false })
   canEditUsers: boolean
 
-  @Column()
+  @Column({ default: false })
   canDeleteUsers: boolean
 
-  @Column()
+  @Column({ default: false })
   haveBookingsAccess: boolean
 
-  @Column()
+  @Column({ default: true })
   canAddBookings: boolean
 
-  @Column()
+  @Column({ default: true })
   canDeleteBookings: boolean
 
-  @Column()
+  @Column({ default: false })
   haveArticlesAccess: boolean
 
-  @Column()
+  @Column({ default: false })
   canAddArticles: boolean
 
-  @Column()
+  @Column({ default: false })
   canEditArticles: boolean
 
-  @Column()
+  @Column({ default: false })
   canDeleteArticles: boolean
 
   @DeleteDateColumn()

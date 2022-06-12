@@ -1,52 +1,57 @@
-import { FindRoleDto } from './dto/find-role.dto'
-import { CreateRoleDto } from './dto/create-role.dto'
-import { Role } from './entities/roles.entity'
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { CreateRoleDto } from './dto/create-role.dto'
+import { FindRoleDto } from './dto/find-role.dto'
+import { Role } from './entities/roles.entity'
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectRepository(Role) private readonly RoleRepo: Repository<Role>,
+    @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
   ) {}
 
   async create(roleDto: CreateRoleDto) {
+    const variant = await this.roleRepo.findOne({
+      name: roleDto.name.toUpperCase(),
+    })
+    if (variant)
+      throw new BadRequestException('Role with this name already exists')
+    const maxPriority = await this.findMaxPriority()
     const role = new Role(roleDto)
-    return await this.RoleRepo.save(role)
+    role.priority = maxPriority
+    await this.roleRepo.update(
+      { priority: maxPriority },
+      { priority: maxPriority + 1 },
+    )
+    return await this.roleRepo.save(role)
   }
 
-  async findOne(name: string) {
-    return await this.RoleRepo.findOne({ where: { name } })
+  async findByName(name: string) {
+    return await this.roleRepo.findOne({ where: { name } })
+  }
+
+  async findMaxPriority() {
+    return (await this.roleRepo.findOne({ order: { priority: 'DESC' } }))
+      .priority
   }
 
   async find(roleDtos: FindRoleDto[]) {
-    return await this.RoleRepo.find({ where: roleDtos })
+    return await this.roleRepo.find({ where: roleDtos })
   }
 
   async delete(roles: Role[]) {
-    return await this.RoleRepo.softRemove(roles)
+    return await this.roleRepo.softRemove(roles)
   }
 
   async update(name: string, opts) {
-    return await this.RoleRepo.createQueryBuilder('role')
-      .update()
-      .where('role.name = :name', { name })
-      .set(opts)
-      .execute()
-      .then((res) => res)
-      .catch(() => {
-        throw new InternalServerErrorException({
-          message: 'oops! smth gone wrong',
-        })
-      })
+    return await this.roleRepo.update({ name }, opts)
   }
 
   async createRootRole() {
-    const variant = await this.RoleRepo.findOne({ priority: 0 })
+    const variant = await this.roleRepo.findOne({ where: { name: 'ROOT' } })
     if (variant) return variant
-    const rootRole = new Role()
-    rootRole.name = 'root'
+    const rootRole = new Role({ name: 'root' })
     rootRole.priority = 0
     rootRole.haveDashboardAccess = true
     rootRole.haveDocsAccess = true
@@ -73,6 +78,16 @@ export class RolesService {
     rootRole.canAddUsers = true
     rootRole.canEditUsers = true
     rootRole.canDeleteUsers = true
-    return await this.RoleRepo.save(rootRole)
+    return await this.roleRepo.save(rootRole)
+  }
+
+  async createBasicRole() {
+    const variant = await this.roleRepo.findOne({ where: { name: 'BASIC' } })
+    if (variant) return variant
+    const rootRole = new Role({ name: 'basic' })
+    rootRole.priority = 1
+    rootRole.canAddBookings = true
+    rootRole.canDeleteBookings = true
+    return await this.roleRepo.save(rootRole)
   }
 }

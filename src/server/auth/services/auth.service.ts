@@ -18,17 +18,7 @@ export class AuthService {
   ) {}
 
   async registerUser(userDto: RegisterDto) {
-    const { email, login } = userDto
-    const candidate = await this.usersService.find([{ email }, { login }])
-    if (candidate.length > 0)
-      throw new BadRequestException(
-        'User with this email/login already exists.',
-      )
-    const user = await this.usersService.create(userDto).catch(() => false)
-    if (user) return user
-    throw new InternalServerErrorException(
-      'Oops! Error while registering user.',
-    )
+    return await this.usersService.create(userDto)
   }
 
   async authenticateUser(
