@@ -13,21 +13,28 @@ import { Request, Response } from 'express'
 import { RenderService } from 'nest-next'
 import passport from 'passport'
 import { AppModule } from './app.module'
+import { ValidationPipe } from '@nestjs/common'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  const config = new DocumentBuilder()
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  )
+  const docConfig = new DocumentBuilder()
     .setTitle('OSL')
     .setDescription('OSL API docs')
     .setVersion('1.0')
     .build()
-  const document = SwaggerModule.createDocument(app, config)
+  const document = SwaggerModule.createDocument(app, docConfig)
   app.use(Fingerprint({ parameters: [useragent, acceptHeaders, ip] }))
   app.use('/api/docs', passport.authorize('AUTH_AUTHORIZE'))
   SwaggerModule.setup('api/docs', app, document)
-  const appConfig = app.get(ConfigService)
-  const service = app.get(RenderService)
-  service.setErrorHandler(
+  const config = app.get(ConfigService)
+  const renderer = app.get(RenderService)
+  renderer.setErrorHandler(
     async (
       err: { response: { message: string } },
       req: Request,
@@ -43,13 +50,12 @@ async function bootstrap() {
       return res.render('404')
     },
   )
-
   const rolesService = app.get(RolesService)
   await rolesService.createBasicRole()
   const rootRole = await rolesService.createRootRole()
   const usersService = app.get(UsersService)
   usersService.createRootUser(rootRole)
-  const PORT = appConfig.get('PORT')
+  const PORT = config.get('PORT')
   await app.listen(PORT, () => {
     console.log(colors.green(`Server started at http://localhost:${PORT}`))
   })

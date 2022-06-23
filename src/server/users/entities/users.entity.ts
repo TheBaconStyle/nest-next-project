@@ -9,18 +9,19 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Booking } from '../../bookings/entities/bookings.entity'
-import { RegisterDto } from '../../auth/dto/register-user.dto'
-import { Role } from '../../roles/entities/roles.entity'
 import { Session } from '../../auth/entities/sessions.entity'
+import { Booking } from '../../bookings/entities/bookings.entity'
+import { Role } from '../../roles/entities/roles.entity'
+import { CreateUserDto } from '../dto/create-user.dto'
 
 @Entity('users')
 export class User {
-  constructor(dto?: RegisterDto) {
+  constructor(dto?: Required<CreateUserDto>) {
     if (dto) {
       this.email = dto.email
       this.password = dto.password
       this.login = dto.login
+      this.roles = dto.roles
     }
   }
 

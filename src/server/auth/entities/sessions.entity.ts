@@ -1,10 +1,9 @@
 import { User } from 'src/server/users/entities/users.entity'
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
-import { CreateSessionDto } from './../dto/create-session.dto'
 
 @Entity('sessions')
 export class Session {
-  constructor(dto?: CreateSessionDto) {
+  constructor(dto?: Partial<Session>) {
     if (dto) {
       this.name = dto.name
       this.hash = dto.hash

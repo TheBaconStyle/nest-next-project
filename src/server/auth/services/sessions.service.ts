@@ -1,44 +1,40 @@
-import { UsersService } from './../../users/users.service'
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { UpdateSessionDto } from './../dto/update-session.dto'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { CreateSessionDto } from '../dto/create-session.dto'
-import { FindSessionDto } from '../dto/find-session.dto'
+import { FindConditions, Repository } from 'typeorm'
 import { Session } from '../entities/sessions.entity'
+import { FindMany, FindOne } from './../../shared/types/find.type'
 
 @Injectable()
 export class SessionsService {
   constructor(
     @InjectRepository(Session)
     private readonly sessionRepo: Repository<Session>,
-    private readonly usersService: UsersService,
   ) {}
 
-  async create(sessionDto: CreateSessionDto) {
+  async create(sessionDto: Partial<Session>) {
     const session = new Session(sessionDto)
-    return await this.sessionRepo.save(session)
+    return await this.sessionRepo.save([session])
   }
 
-  async findOne(hash: string) {
+  async findOne(sessionDto: FindConditions<Session>) {
     return await this.sessionRepo.findOne({
-      where: { hash },
+      where: sessionDto,
       relations: ['user', 'user.roles'],
     })
   }
 
-  async find(sessionDtos: FindSessionDto[]) {
+  async find(sessionDtos: FindMany<Session>) {
     return await this.sessionRepo.find({
       where: sessionDtos,
     })
   }
 
-  async delete(hash: string) {
-    return await this.sessionRepo.delete({ hash })
+  async delete(session: Session) {
+    return await this.sessionRepo.remove([session])
   }
 
-  async update(hash: string, opts: CreateSessionDto) {
-    return await this.sessionRepo.update({ hash }, opts).catch(() => {
-      throw new InternalServerErrorException('Oops! Update session error!')
-    })
+  async update(hash: string, opts: Partial<UpdateSessionDto>) {
+    return await this.sessionRepo.update({ hash }, opts)
   }
 }

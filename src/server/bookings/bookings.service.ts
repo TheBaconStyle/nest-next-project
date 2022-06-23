@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import dayjs from 'dayjs'
 import { User } from 'src/server/users/entities/users.entity'
-import { MoreThan, Repository } from 'typeorm'
-import { FindPageDto } from './../shared/types/find-page.type'
+import { Between, Repository } from 'typeorm'
+import { PageOptions } from '../shared/types/page.dto'
 import { CreateBookDto } from './dto/create-book.dto'
 import { Booking } from './entities/bookings.entity'
 
@@ -13,43 +14,45 @@ export class BookingsService {
     private readonly bookingRepo: Repository<Booking>,
   ) {}
 
-  async create(dto: CreateBookDto) {
-    const book = new Booking(dto)
-    return await this.bookingRepo.save(book)
+  async create(dto: CreateBookDto, user: User) {
+    // const book = new Booking()
+    // book.facility.id = dto.facility
+    // return await this.bookingRepo.save(book)
   }
 
-  async findForDashboard({ page, pageSize }: FindPageDto) {
+  async findForDashboard(pageOptions: PageOptions) {
     return await this.bookingRepo.find({
-      skip: (page > 0 ? page : 0) * pageSize,
-      take: pageSize,
+      ...pageOptions,
       order: {
         from: 'ASC',
       },
     })
   }
 
-  async findByFacility(facilityId: string, pageOpts?: FindPageDto) {
+  async findForFacility(facilityId: string, date: Date) {
     return await this.bookingRepo.find({
       order: {
         from: 'ASC',
       },
-      where: { facility: { id: facilityId }, from: MoreThan(new Date()) },
+      where: {
+        facility: { id: facilityId },
+        from: Between(date, dayjs(date).add(1, 'day').toDate()),
+      },
     })
   }
 
-  async findByDate(date: Date, { page, pageSize }: FindPageDto) {
+  async findForUser(user: User, pageOptions: PageOptions) {
     return await this.bookingRepo.find({
-      skip: (page > 0 ? page : 0) * pageSize,
-      take: pageSize,
+      ...pageOptions,
       order: {
         from: 'ASC',
       },
-      where: [{ from: date }, { to: date }],
+      where: { user },
     })
   }
 
-  async canBook(user: User) {
-    return (await this.bookingRepo.count({ where: { user } })) <= 5
+  async canBook(user: User, max: number) {
+    return (await this.bookingRepo.count({ where: { user } })) <= max
   }
 
   async deleteById(id: string) {

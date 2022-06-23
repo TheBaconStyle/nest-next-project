@@ -1,9 +1,11 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { ReqUser } from 'src/server/shared/decorators/user-from-request.decorator'
+import { User } from 'src/server/users/entities/users.entity'
+import { IReqFingerprint } from '../../shared/types/req-fingerprint.interface'
 import { RegisterDto } from '../dto/register-user.dto'
-import { IReqFingerprint } from './../../shared/types/req-fingerprint.type'
 import { SignInDto } from '../dto/signin-user.dto'
-import { UnautnenticatedGuard } from './../guards/unauthenticated.guard'
+import { AuthorizeGuard } from './../guards/authorize.guard'
 import { AuthService } from './../services/auth.service'
 
 @Controller('/api/auth')
@@ -13,9 +15,8 @@ export class AuthAPIController {
 
   @Post('signup')
   async rigisterUser(@Body() userDto: RegisterDto) {
-    return await this.authService.registerUser(userDto).then(() => ({
-      message: 'Registered successfully',
-    }))
+    await this.authService.registerUser(userDto)
+    return 'Registered successfully'
   }
 
   @Post('signin')
@@ -24,18 +25,19 @@ export class AuthAPIController {
     @Body() userDto: SignInDto,
   ) {
     await this.authService.authenticateUser(userDto, req.fingerprint)
-    return 'Successfully signed in!'
+    return 'Signed in'
   }
 
-  @Get('signout')
+  @Post('signout')
+  @UseGuards(AuthorizeGuard)
   async signout(@Req() req: IReqFingerprint) {
     await this.authService.deauthenticateUser(req.fingerprint.hash)
     return 'Signed out'
   }
 
-  @Get('/')
-  @UseGuards(UnautnenticatedGuard)
-  async check() {
-    return 'OK'
+  @Get()
+  @UseGuards(AuthorizeGuard)
+  async check(@ReqUser() user: User) {
+    return `OK, ${user.roles}`
   }
 }

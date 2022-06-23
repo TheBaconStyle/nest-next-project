@@ -4,7 +4,7 @@ import {
 } from './../../shared/utils/identify-permissions.helper'
 import { CanActivate, ExecutionContext, mixin } from '@nestjs/common'
 import { Request } from 'express'
-import { User } from './../../users/entities/users.entity'
+import { User } from '../../users/entities/users.entity'
 
 export function RoleGuard(rolePerms: RolePermissions) {
   return mixin(

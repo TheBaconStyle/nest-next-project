@@ -1,12 +1,13 @@
+import { Facility } from './../../facilities/entities/facilities.entity'
 import { ApiProperty } from '@nestjs/swagger'
-import { User } from '../../users/entities/users.entity'
 
 export class CreateBookDto {
   @ApiProperty()
-  from: Date
+  from: string
 
   @ApiProperty()
-  to: Date
+  to: string
 
-  user: User
+  @ApiProperty()
+  facility: Facility
 }

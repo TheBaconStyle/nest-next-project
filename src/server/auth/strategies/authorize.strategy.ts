@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-custom'
 import { AuthService } from '../services/auth.service'
 import { AUTHORIZE } from '../shared/auth.constants'
-import { IReqFingerprint } from './../../shared/types/req-fingerprint.type'
+import { IReqFingerprint } from '../../shared/types/req-fingerprint.interface'
 
 @Injectable()
 export class AuthorizeStrategy extends PassportStrategy(Strategy, AUTHORIZE) {

@@ -1,4 +1,4 @@
-import { Facility } from './../../facilities/entities/facilities.entity'
+import dayjs from 'dayjs'
 import { User } from 'src/server/users/entities/users.entity'
 import {
   Column,
@@ -7,16 +7,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { CreateBookDto } from '../dto/create-book.dto'
+import { Facility } from './../../facilities/entities/facilities.entity'
 
 @Entity('bookings')
 export class Booking {
-  constructor(dto?: CreateBookDto) {
-    if (dto) {
-      this.from = dto.from
-      this.to = dto.to
-      this.user = dto.user
-    }
+  constructor(facility?: string, user?: User, from?: string, to?: string) {
+    this.from = dayjs(from).toDate()
+    this.to = dayjs(to).toDate()
+    // this.facility = facility
+    this.user = user
   }
 
   @PrimaryGeneratedColumn('uuid')
