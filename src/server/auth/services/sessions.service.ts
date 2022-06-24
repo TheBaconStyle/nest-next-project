@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindConditions, Repository } from 'typeorm'
 import { Session } from '../entities/sessions.entity'
-import { FindMany, FindOne } from './../../shared/types/find.type'
+import { FindMany, FindOne } from './../../shared/types'
 
 @Injectable()
 export class SessionsService {

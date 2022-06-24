@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Role } from '../roles/entities/roles.entity'
-import { FindMany, FindOne } from './../shared/types/find.type'
+import { FindMany, FindOne } from './../shared/types'
 import { CreateUserDto } from './dto/create-user.dto'
 import { User } from './entities/users.entity'
 

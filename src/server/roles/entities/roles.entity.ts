@@ -1,4 +1,3 @@
-import { CreateRoleDto } from '../dto/create-role.dto'
 import {
   BeforeInsert,
   Column,
@@ -6,10 +5,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm'
+import { RequiredFields } from './../../shared/types/index'
 
 @Entity('roles')
 export class Role {
-  constructor(dto?: CreateRoleDto) {
+  constructor(dto?: RequiredFields<Role, 'name'>) {
     if (dto) {
       this.name = dto.name
     }

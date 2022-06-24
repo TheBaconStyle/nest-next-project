@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import dayjs from 'dayjs'
 import { User } from 'src/server/users/entities/users.entity'
 import { Between, Repository } from 'typeorm'
-import { PageOptions } from '../shared/types/page.dto'
+import { PageOptions } from '../shared/types'
 import { CreateBookDto } from './dto/create-book.dto'
 import { Booking } from './entities/bookings.entity'
 

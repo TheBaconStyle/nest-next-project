@@ -1,6 +1,4 @@
-import { PageOptions } from '../shared/types/page.dto'
-import { AuthorizeGuard } from './../auth/guards/authorize.guard'
-import { RolesService } from './roles.service'
+import { PageDto } from './../shared/types/index'
 import {
   Body,
   Controller,
@@ -11,11 +9,15 @@ import {
   Post,
   Query,
   UseGuards,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { CreateRoleDto } from './dto/create-role.dto'
 import { RoleGuard } from '../auth/guards/role.guard'
+import { PageOptions } from '../shared/types'
+import { AuthorizeGuard } from './../auth/guards/authorize.guard'
+import { CreateRoleDto } from './dto/create-role.dto'
+import { RolesService } from './roles.service'
 
 @Controller('api/roles')
 @UseGuards(
@@ -27,17 +29,20 @@ export class RolesAPIController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
-  async create(@Body() roleDto: CreateRoleDto) {
+  async create(
+    @Body()
+    roleDto: CreateRoleDto,
+  ) {
     await this.rolesService.create(roleDto)
     return 'New role successfully created!'
   }
 
   @Get()
   async getPage(
-    @Query(ValidationPipe)
-    pageOptions: PageOptions,
+    @Query()
+    pageOptions: PageDto,
   ) {
-    return
+    return pageOptions
   }
 
   @Get(':id?')

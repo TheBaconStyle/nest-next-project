@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ReqUser } from 'src/server/shared/decorators/user-from-request.decorator'
 import { User } from 'src/server/users/entities/users.entity'
-import { IReqFingerprint } from '../../shared/types/req-fingerprint.interface'
+import { IReqFingerprint } from '../../shared/types'
 import { RegisterDto } from '../dto/register-user.dto'
 import { SignInDto } from '../dto/signin-user.dto'
 import { AuthorizeGuard } from './../guards/authorize.guard'
@@ -37,7 +37,7 @@ export class AuthAPIController {
 
   @Get()
   @UseGuards(AuthorizeGuard)
-  async check(@ReqUser() user: User) {
-    return `OK, ${user.roles}`
+  async check() {
+    return `OK`
   }
 }

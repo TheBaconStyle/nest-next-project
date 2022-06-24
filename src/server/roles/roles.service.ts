@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { PageOptions } from '../shared/types/page.dto'
-import { FindMany, FindOne } from './../shared/types/find.type'
+import { PageOptions, RequiredFields } from '../shared/types'
+import { FindMany, FindOne } from './../shared/types'
 import { CreateRoleDto } from './dto/create-role.dto'
 import { UpdateRoleDto } from './dto/update-role.dto'
 import { Role } from './entities/roles.entity'
@@ -13,7 +13,7 @@ export class RolesService {
     @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
   ) {}
 
-  async create(roleDto: CreateRoleDto) {
+  async create(roleDto: RequiredFields<Role, 'name'>) {
     const variant = await this.roleRepo.findOne({
       name: roleDto.name.toUpperCase(),
     })

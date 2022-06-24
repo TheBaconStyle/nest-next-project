@@ -1,5 +1,4 @@
-import { UsersService } from './users/users.service'
-import { RolesService } from './roles/roles.service'
+import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
@@ -11,9 +10,10 @@ import Fingerprint, {
 import colors from 'colors'
 import { Request, Response } from 'express'
 import { RenderService } from 'nest-next'
-import passport from 'passport'
 import { AppModule } from './app.module'
-import { ValidationPipe } from '@nestjs/common'
+import { RolesService } from './roles/roles.service'
+import { ProtectDocs } from './shared/middlewares/protect-docs.middleware'
+import { UsersService } from './users/users.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -21,6 +21,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      disableErrorMessages: process.env.NODE_ENV !== 'development',
     }),
   )
   const docConfig = new DocumentBuilder()
@@ -30,7 +31,7 @@ async function bootstrap() {
     .build()
   const document = SwaggerModule.createDocument(app, docConfig)
   app.use(Fingerprint({ parameters: [useragent, acceptHeaders, ip] }))
-  app.use('/api/docs', passport.authorize('AUTH_AUTHORIZE'))
+  if (process.env.NODE_ENV !== 'development') app.use('/api/docs', ProtectDocs)
   SwaggerModule.setup('api/docs', app, document)
   const config = app.get(ConfigService)
   const renderer = app.get(RenderService)
@@ -40,7 +41,7 @@ async function bootstrap() {
       req: Request,
       res: Response,
     ) => {
-      if (req.path.includes('/api') && req.body) {
+      if (req.path.includes('api')) {
         if (process.env.NODE_ENV === 'development') console.log(err)
         if (err.response.message) {
           return res.send({ message: err.response.message })
