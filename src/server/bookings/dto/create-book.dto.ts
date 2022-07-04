@@ -1,12 +1,15 @@
 import { Facility } from './../../facilities/entities/facilities.entity'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsDate } from 'class-validator'
 
 export class CreateBookDto {
   @ApiProperty()
-  from: string
+  @IsDate()
+  from: Date
 
+  @IsDate()
   @ApiProperty()
-  to: string
+  to: Date
 
   @ApiProperty()
   facility: Facility

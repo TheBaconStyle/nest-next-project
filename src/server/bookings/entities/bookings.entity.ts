@@ -8,14 +8,17 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Facility } from './../../facilities/entities/facilities.entity'
+import { CreateBookDto } from './../dto/create-book.dto'
 
 @Entity('bookings')
 export class Booking {
-  constructor(facility?: string, user?: User, from?: string, to?: string) {
-    this.from = dayjs(from).toDate()
-    this.to = dayjs(to).toDate()
-    // this.facility = facility
-    this.user = user
+  constructor(dto?: CreateBookDto & { user: User }) {
+    if (dto) {
+      this.from = dayjs(dto.from).toDate()
+      this.to = dayjs(dto.to).toDate()
+      this.facility = Promise.resolve(dto.facility)
+      this.user = Promise.resolve(dto.user)
+    }
   }
 
   @PrimaryGeneratedColumn('uuid')
@@ -28,10 +31,10 @@ export class Booking {
   to: Date
 
   @ManyToOne(() => User, (user) => user.bookings)
-  user: User
+  user: Promise<User>
 
   @ManyToOne(() => Facility, (facility) => facility.bookings)
-  facility: Facility
+  facility: Promise<Facility>
 
   @DeleteDateColumn()
   deletedAt: Date

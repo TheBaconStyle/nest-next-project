@@ -6,6 +6,7 @@
   "include": [
     "./src/server/**/*.ts",
     "./src/shared/**/*.ts",
+    "./src/shared/**/*.d.ts",
     "./@types/**/*.d.ts"
   ]
 }

@@ -1,12 +1,12 @@
-import {
-  havePermissions,
-  RolePermissions,
-} from './../../shared/utils/identify-permissions.helper'
 import { CanActivate, ExecutionContext, mixin } from '@nestjs/common'
 import { Request } from 'express'
 import { User } from '../../users/entities/users.entity'
+import {
+  havePermissions,
+  RolePermissions,
+} from '../../shared/utils/identify-permissions.helper'
 
-export function RoleGuard(rolePerms: RolePermissions) {
+export function PermissionGuard(rolePerms: RolePermissions) {
   return mixin(
     class Guard implements CanActivate {
       canActivate(context: ExecutionContext) {

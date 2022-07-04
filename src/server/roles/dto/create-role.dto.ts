@@ -1,7 +1,10 @@
-import { IsNotEmpty, MaxLength, MinLength } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString, MaxLength, MinLength } from 'class-validator'
+
 export class CreateRoleDto {
-  @MaxLength(16)
-  @MinLength(4, { message: 'имя роли должно содержать не менее 4 символов' })
-  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  @MinLength(5)
+  @MaxLength(10)
   name: string
 }

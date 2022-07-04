@@ -99,7 +99,7 @@ export class Role {
   @Column({ default: false })
   canDeleteArticles: boolean
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ select: false })
   deletedAt: Date
 
   @BeforeInsert()

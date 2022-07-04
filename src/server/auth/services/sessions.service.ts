@@ -1,9 +1,10 @@
-import { UpdateSessionDto } from './../dto/update-session.dto'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindConditions, Repository } from 'typeorm'
 import { Session } from '../entities/sessions.entity'
-import { FindMany, FindOne } from './../../shared/types'
+import { FindMany } from './../../shared/types'
+import { CreateSessionDto } from './../dto/create-session.dto'
+import { UpdateSessionDto } from './../dto/update-session.dto'
 
 @Injectable()
 export class SessionsService {
@@ -12,7 +13,7 @@ export class SessionsService {
     private readonly sessionRepo: Repository<Session>,
   ) {}
 
-  async create(sessionDto: Partial<Session>) {
+  async create(sessionDto: CreateSessionDto) {
     const session = new Session(sessionDto)
     return await this.sessionRepo.save([session])
   }

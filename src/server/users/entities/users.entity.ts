@@ -16,12 +16,12 @@ import { CreateUserDto } from '../dto/create-user.dto'
 
 @Entity('users')
 export class User {
-  constructor(dto?: Required<CreateUserDto>) {
+  constructor(dto?: CreateUserDto) {
     if (dto) {
       this.email = dto.email
       this.password = dto.password
       this.login = dto.login
-      this.roles = dto.roles
+      this.roles = Promise.resolve(dto.roles)
     }
   }
 
@@ -42,13 +42,13 @@ export class User {
 
   @ManyToMany(() => Role)
   @JoinTable()
-  roles: Role[]
+  roles: Promise<Role[]>
 
   @OneToMany(() => Session, (session) => session.user)
-  sessions: Session[]
+  sessions: Promise<Session[]>
 
   @OneToMany(() => Booking, (booking) => booking.user)
-  bookings: Booking[]
+  bookings: Promise<Booking[]>
 
   @DeleteDateColumn()
   deletedAt: Date

@@ -46,7 +46,7 @@ async function bootstrap() {
         if (err.response.message) {
           return res.send({ message: err.response.message })
         }
-        return
+        return res.send(err)
       }
       return res.render('404')
     },
@@ -61,5 +61,4 @@ async function bootstrap() {
     console.log(colors.green(`Server started at http://localhost:${PORT}`))
   })
 }
-
 bootstrap()

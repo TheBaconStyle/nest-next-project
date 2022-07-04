@@ -8,6 +8,7 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm'
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity('facilities')
 export class Facility {

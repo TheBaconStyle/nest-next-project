@@ -14,7 +14,7 @@ export class UsersService {
     private readonly configService: ConfigService,
   ) {}
 
-  async create(dto: Required<CreateUserDto>) {
+  async create(dto: CreateUserDto) {
     const { email, login } = dto
     const candidate = await this.userRepo.findOne({
       where: [{ email }, { login }],
