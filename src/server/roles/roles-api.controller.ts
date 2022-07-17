@@ -3,8 +3,8 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
-  InternalServerErrorException,
   ParseIntPipe,
   Patch,
   Post,
@@ -12,7 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiQuery, ApiTags } from '@nestjs/swagger'
-import { Like } from 'typeorm'
 import { PermissionGuard } from '../auth/guards/permission.guard'
 import { ReqUser } from '../shared/decorators/user-from-request.decorator'
 import { AuthorizeGuard } from './../auth/guards/authorize.guard'
@@ -40,7 +39,7 @@ export class RolesAPIController {
   @Get()
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'id', required: false, type: String })
-  async getPage(
+  async get(
     @Query('page', ParseIntPipe)
     page: number,
     @Query('size', ParseIntPipe)
@@ -48,12 +47,16 @@ export class RolesAPIController {
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
-    if (!id && !name)
-      return this.rolesService.find({}, { skip: (page - 1) * size, take: size })
+    if (!id && !name) {
+      return await this.rolesService.find(
+        {},
+        { skip: (page - 1) * size, take: size },
+      )
+    }
     return await this.rolesService.find(
       [
         {
-          name: name ? Like(name.toUpperCase()) : undefined,
+          name: name ? name.toUpperCase() : undefined,
         },
         { id },
       ],
@@ -71,24 +74,23 @@ export class RolesAPIController {
     @Body() changes: UpdateRoleDto,
     @ReqUser() user: User,
   ) {
+    if (!id || !changes) throw new BadRequestException("Can't update role!")
     const myRoles = await user.roles
     const updatingRole = await this.rolesService.findOne({ id })
     if (!myRoles.some((role) => role.priority < updatingRole.priority)) {
-      throw new BadRequestException('You cannot modify this role')
+      throw new ForbiddenException('You cannot modify this role')
     }
-    const result = await this.rolesService
-      .update(updatingRole, changes)
-      .catch(() => {
-        throw new InternalServerErrorException('Cannot modify role')
-      })
-    return `Updated ${result.affected ?? 0} role(s)`
+    if (changes.name) changes.name = changes.name.toUpperCase()
+    await this.rolesService.update(updatingRole, changes)
+    return `Updated role`
   }
 
   @Delete()
   @UseGuards(PermissionGuard(['canDeleteRoles']))
   async delete(@Query('id') id: string) {
+    if (!id) throw new BadRequestException("Can't delete role!")
     const role = await this.rolesService.findOne({ id })
-    const result = await this.rolesService.delete([role])
-    return `Deleted ${result.length | 0} role(s)`
+    await this.rolesService.delete([role])
+    return `Deleted role`
   }
 }

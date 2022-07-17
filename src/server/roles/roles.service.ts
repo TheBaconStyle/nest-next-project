@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { FindMany, PageOptions, RequiredFields } from '../shared/types'
-import { MutableFields } from './../shared/types/index'
+import { FindMany, FindOne, PageOptions, RequiredFields } from '../shared/types'
+import { UpdateRoleDto } from './dto/update-role.dto'
 import { Role } from './entities/roles.entity'
 
 @Injectable()
@@ -37,7 +37,7 @@ export class RolesService {
     )
   }
 
-  async findOne(roleDto: Partial<Role>) {
+  async findOne(roleDto: FindOne<Role>) {
     return await this.roleRepo.findOne(roleDto)
   }
 
@@ -56,7 +56,7 @@ export class RolesService {
     return await this.roleRepo.softRemove(roles)
   }
 
-  async update(role: Role, opts: MutableFields<Role, 'id' | 'name'>) {
+  async update(role: Role, opts: UpdateRoleDto) {
     return await this.roleRepo.update(role, opts)
   }
 

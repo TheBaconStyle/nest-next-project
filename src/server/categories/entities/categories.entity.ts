@@ -1,4 +1,3 @@
-import { Facility } from './../../facilities/entities/facilities.entity'
 import {
   Column,
   DeleteDateColumn,
@@ -6,9 +5,17 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
+import { Facility } from './../../facilities/entities/facilities.entity'
+import { RequiredFields } from './../../shared/types/index'
 
 @Entity('categories')
 export class Category {
+  constructor(dto?: RequiredFields<Category, 'name' | 'img'>) {
+    if (dto) {
+      this.name = dto.name
+      this.img = dto.img
+    }
+  }
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -19,7 +26,7 @@ export class Category {
   img: string
 
   @OneToMany(() => Facility, (facility) => facility.category)
-  facilities: Facility[]
+  facilities: Promise<Facility[]>
 
   @DeleteDateColumn()
   deletedAt: Date

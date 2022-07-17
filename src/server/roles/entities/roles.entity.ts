@@ -1,8 +1,11 @@
+import { User } from './../../users/entities/users.entity'
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { RequiredFields } from './../../shared/types/index'
@@ -99,11 +102,18 @@ export class Role {
   @Column({ default: false })
   canDeleteArticles: boolean
 
+  @ManyToOne(() => User, (user) => user.roles)
+  users: Promise<User[]>
+
   @DeleteDateColumn({ select: false })
   deletedAt: Date
 
   @BeforeInsert()
   private async prepare() {
+    this.name = this.name.toUpperCase()
+  }
+  @BeforeUpdate()
+  private async update() {
     this.name = this.name.toUpperCase()
   }
 }

@@ -1,133 +1,138 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator'
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class UpdateRoleDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  name?: string
+
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   priority?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveDashboardAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveDocsAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveCategoriesAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canAddCategories?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canEditCategories?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canDeleteCategories?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveFacilitiesAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canAddFacilities?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canEditFacilities?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canDeleteFacilities?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveRolesAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canAddRoles?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canEditRoles?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canDeleteRoles?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveUsersAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canAddUsers?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canEditUsers?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canDeleteUsers?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveBookingsAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canAddBookings?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canDeleteBookings?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   haveArticlesAccess?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canAddArticles?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canEditArticles?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
   canDeleteArticles?: boolean

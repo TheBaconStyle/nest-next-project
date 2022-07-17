@@ -14,7 +14,7 @@ import { AuthorizeStrategy } from './strategies/authorize.strategy'
 @Module({
   imports: [
     PassportModule.register({}),
-    TypeOrmModule.forFeature([Role, Session]),
+    TypeOrmModule.forFeature([Session]),
     UsersModule,
     RolesModule,
   ],

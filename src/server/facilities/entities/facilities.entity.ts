@@ -25,10 +25,10 @@ export class Facility {
   img: string
 
   @ManyToOne(() => Category, (category) => category.facilities)
-  category: string
+  category: Promise<Category>
 
   @OneToMany(() => Booking, (booking) => booking.facility)
-  bookings: Booking[]
+  bookings: Promise<Booking[]>
 
   @DeleteDateColumn()
   deletedAt: Date

@@ -1,5 +1,3 @@
-import { Category } from './categories/entities/categories.entity'
-import { FacilitiesModule } from './facilities/facilities.module'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
@@ -12,11 +10,13 @@ import { AuthModule } from './auth/auth.module'
 import { Session } from './auth/entities/sessions.entity'
 import { BookingsModule } from './bookings/bookings.module'
 import { Booking } from './bookings/entities/bookings.entity'
+import { CategoriesModule } from './categories/categories.module'
+import { Category } from './categories/entities/categories.entity'
 import { Facility } from './facilities/entities/facilities.entity'
+import { FacilitiesModule } from './facilities/facilities.module'
 import { Role } from './roles/entities/roles.entity'
 import { User } from './users/entities/users.entity'
 import { UsersModule } from './users/users.module'
-import { RouterModule } from '@nestjs/core'
 
 @Module({
   imports: [
@@ -50,6 +50,7 @@ import { RouterModule } from '@nestjs/core'
     BookingsModule,
     UsersModule,
     FacilitiesModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
 })

@@ -21,6 +21,7 @@ export interface PageOptions {
   skip: number
   take: number
 }
+
 const isNumberValError = (valArgs: ValidationArguments) =>
   `${valArgs.property} query param must be a number`
 export class PageDto {
