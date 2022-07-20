@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer'
 import {
   Column,
   DeleteDateColumn,
@@ -10,12 +11,10 @@ import { RequiredFields } from './../../shared/types/index'
 
 @Entity('categories')
 export class Category {
-  constructor(dto?: RequiredFields<Category, 'name' | 'img'>) {
-    if (dto) {
-      this.name = dto.name
-      this.img = dto.img
-    }
+  constructor(dto?: Partial<Category>) {
+    Object.assign(this, dto)
   }
+
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -29,5 +28,6 @@ export class Category {
   facilities: Promise<Facility[]>
 
   @DeleteDateColumn()
+  @Exclude()
   deletedAt: Date
 }

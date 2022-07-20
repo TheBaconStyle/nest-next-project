@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import { User } from 'src/server/users/entities/users.entity'
 import { Between, Repository } from 'typeorm'
 import { PageOptions } from '../shared/types'
-import { CreateBookDto } from './dto/create-book.dto'
+import { RequiredFields } from './../shared/types/index'
 import { Booking } from './entities/bookings.entity'
 
 @Injectable()
@@ -14,7 +14,9 @@ export class BookingsService {
     private readonly bookingRepo: Repository<Booking>,
   ) {}
 
-  async create(dto: CreateBookDto, user: User) {
+  async create(
+    dto: RequiredFields<Booking, 'from' | 'to' | 'facility' | 'user'>,
+  ) {
     // const book = new Booking()
     // book.facility.id = dto.facility
     // return await this.bookingRepo.save(book)

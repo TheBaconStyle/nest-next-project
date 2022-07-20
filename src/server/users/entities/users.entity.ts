@@ -16,13 +16,8 @@ import { CreateUserDto } from '../dto/create-user.dto'
 
 @Entity('users')
 export class User {
-  constructor(dto?: CreateUserDto) {
-    if (dto) {
-      this.email = dto.email
-      this.password = dto.password
-      this.login = dto.login
-      this.roles = Promise.resolve(dto.roles)
-    }
+  constructor(dto?: Partial<User>) {
+    Object.assign(this, dto)
   }
 
   @PrimaryGeneratedColumn('uuid')

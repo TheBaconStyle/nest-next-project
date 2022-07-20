@@ -31,7 +31,7 @@ export class BookingsAPIController {
   ) {}
 
   @Post()
-  async createBookings(
+  async create(
     @Body() { facility: facilityId, from, to }: CreateBookDto,
     @ReqUser() user: User,
   ) {
@@ -52,11 +52,8 @@ export class BookingsAPIController {
     // return `booked on ${dayjs(book.from).format('DD-MM-YYYY HH:mm')}`
   }
 
-  @Get('/:facility')
-  async getForFacility(
-    @Body('date') date: Date,
-    @Param('facility') facilityId: string,
-  ) {
+  @Get()
+  async get(@Body('date') date: Date) {
     // return `${date.toISOString()} ${facilityId}`
   }
 

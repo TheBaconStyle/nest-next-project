@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { FingerprintData } from '@shwao/express-fingerprint'
+import { User } from 'src/server/users/entities/users.entity'
 import { UsersService } from '../../users/users.service'
-import { RegisterDto } from '../dto/register-user.dto'
-import { SignInDto } from '../dto/signin-user.dto'
 import { RolesService } from './../../roles/roles.service'
+import { RequiredFields } from './../../shared/types/index'
 import { SessionsService } from './sessions.service'
 
 @Injectable()
@@ -14,19 +14,24 @@ export class AuthService {
     private readonly rolesService: RolesService,
   ) {}
 
-  async registerUser(userData: Required<RegisterDto>) {
+  async registerUser(
+    userData: RequiredFields<User, 'email' | 'login' | 'password'>,
+  ) {
     const basicRole = await this.rolesService.getBasicRole()
-    return await this.usersService.create({ ...userData, roles: [basicRole] })
+    return await this.usersService.create({
+      ...userData,
+      roles: Promise.resolve([basicRole]),
+    })
   }
 
   async authenticateUser(
-    { login, password }: Required<SignInDto>,
+    { login, password }: RequiredFields<User, 'login' | 'password'>,
     fingerprint: FingerprintData,
   ) {
-    const candidate = await this.usersService.findOne({ login })
-    if (!candidate)
+    const candidate = this.usersService.findOne({ login })
+    if (!(await candidate))
       throw new UnauthorizedException('User with this login does not exist.')
-    if (await candidate.validatePassword(password)) {
+    if (await (await candidate).validatePassword(password)) {
       const useragent = fingerprint.components.useragent
       return await this.sessionsService.create({
         user: candidate,

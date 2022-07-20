@@ -1,11 +1,16 @@
-import { BadRequestException, Injectable, UploadedFile } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { unlink } from 'fs/promises'
-import { join } from 'path'
-import { basename } from 'path/win32'
+import { basename, join } from 'path'
 import { Repository } from 'typeorm'
 import { createPublicDestination } from '../shared/utils/multer.helper'
-import { FindMany, FindOne, PageOptions } from './../shared/types/index'
+import {
+  FindMany,
+  FindOne,
+  PageOptions,
+  PartialFields,
+  RequiredFields,
+} from './../shared/types/index'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { Category } from './entities/categories.entity'
 
@@ -15,13 +20,12 @@ export class CategoriesService {
     @InjectRepository(Category)
     private readonly categoriesRepo: Repository<Category>,
   ) {}
-
-  async create(createData: CreateCategoryDto) {
-    const img = basename(createData.img.path)
+  async create(createData: RequiredFields<Category, 'name' | 'img'>) {
     const variant = await this.categoriesRepo.findOne({ name: createData.name })
     if (variant) {
       throw new BadRequestException('Category with this name already exists')
     }
+    const img = basename(createData.img)
     const category = new Category({ ...createData, img })
     return await this.categoriesRepo.save(category)
   }
@@ -30,9 +34,9 @@ export class CategoriesService {
     return await this.categoriesRepo.findOne(findData)
   }
 
-  async find(findCategoriesDtos: FindMany<Category>, pageOptions: PageOptions) {
+  async find(findData: FindMany<Category>, pageOptions: PageOptions) {
     return await this.categoriesRepo.find({
-      where: findCategoriesDtos,
+      where: findData,
       ...pageOptions,
       order: { name: 'ASC' },
     })
@@ -40,19 +44,24 @@ export class CategoriesService {
 
   async update(
     category: Category,
-    updateData: Partial<Pick<Category, 'name' | 'img'>>,
+    updateData: PartialFields<Category, 'name' | 'img'>,
   ) {
     if (updateData.img) {
-      await unlink(join(createPublicDestination('categories'), category.img))
-      category.img = updateData.img
+      await unlink(
+        join(createPublicDestination('categories'), category.img),
+      ).catch((e) => console.log(e))
+      updateData.img = basename(updateData.img)
     }
-    if (updateData.name) {
-      category.name = updateData.name
-    }
+    Object.assign(category, updateData)
     return await this.categoriesRepo.save(category)
   }
 
   async delete(categories: Category[]) {
+    // await Promise.all(
+    //   categories.map(async (category) => {
+    //     await unlink(join(createPublicDestination('categories'), category.img))
+    //   }),
+    // )
     return await this.categoriesRepo.softRemove(categories)
   }
 }

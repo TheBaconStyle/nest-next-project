@@ -13,12 +13,7 @@ import { CreateBookDto } from './../dto/create-book.dto'
 @Entity('bookings')
 export class Booking {
   constructor(dto?: CreateBookDto & { user: User }) {
-    if (dto) {
-      this.from = dayjs(dto.from).toDate()
-      this.to = dayjs(dto.to).toDate()
-      this.facility = Promise.resolve(dto.facility)
-      this.user = Promise.resolve(dto.user)
-    }
+    Object.assign(this, dto)
   }
 
   @PrimaryGeneratedColumn('uuid')

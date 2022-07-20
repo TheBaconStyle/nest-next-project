@@ -1,3 +1,4 @@
+import { RequiredFields } from './../../shared/types/index'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindConditions, Repository } from 'typeorm'
@@ -13,7 +14,7 @@ export class SessionsService {
     private readonly sessionRepo: Repository<Session>,
   ) {}
 
-  async create(sessionDto: CreateSessionDto) {
+  async create(sessionDto: RequiredFields<Session, 'hash' | 'name' | 'user'>) {
     const session = new Session(sessionDto)
     return await this.sessionRepo.save([session])
   }

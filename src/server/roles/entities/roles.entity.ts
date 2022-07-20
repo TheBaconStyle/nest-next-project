@@ -1,4 +1,4 @@
-import { User } from './../../users/entities/users.entity'
+import { IsString } from 'class-validator'
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -8,20 +8,19 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { RequiredFields } from './../../shared/types/index'
+import { User } from './../../users/entities/users.entity'
 
 @Entity('roles')
 export class Role {
-  constructor(dto?: RequiredFields<Role, 'name'>) {
-    if (dto) {
-      this.name = dto.name
-    }
+  constructor(dto?: Partial<Role>) {
+    Object.assign(this, dto)
   }
 
   @PrimaryGeneratedColumn('uuid')
   id: string
 
   @Column({ unique: true, nullable: false })
+  @IsString()
   name: string
 
   @Column({})

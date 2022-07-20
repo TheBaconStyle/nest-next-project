@@ -1,17 +1,21 @@
+import { Exclude } from 'class-transformer'
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 import { Booking } from './../../bookings/entities/bookings.entity'
 import { Category } from './../../categories/entities/categories.entity'
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  DeleteDateColumn,
-  OneToMany,
-} from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger'
 
 @Entity('facilities')
 export class Facility {
+  constructor(dto?: Partial<Facility>) {
+    Object.assign(this, dto)
+  }
+
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -31,5 +35,6 @@ export class Facility {
   bookings: Promise<Booking[]>
 
   @DeleteDateColumn()
+  @Exclude()
   deletedAt: Date
 }

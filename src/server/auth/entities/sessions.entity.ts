@@ -4,12 +4,8 @@ import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
 
 @Entity('sessions')
 export class Session {
-  constructor(dto?: CreateSessionDto) {
-    if (dto) {
-      this.name = dto.name
-      this.hash = dto.hash
-      this.user = Promise.resolve(dto.user)
-    }
+  constructor(dto?: Partial<Session>) {
+    Object.assign(this, dto)
   }
 
   @PrimaryColumn({ nullable: false })

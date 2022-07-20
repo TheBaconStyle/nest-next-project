@@ -1,3 +1,4 @@
+import { RequiredFields } from './../shared/types/index'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -14,7 +15,9 @@ export class UsersService {
     private readonly configService: ConfigService,
   ) {}
 
-  async create(dto: CreateUserDto) {
+  async create(
+    dto: RequiredFields<User, 'login' | 'email' | 'password' | 'roles'>,
+  ) {
     const { email, login } = dto
     const candidate = await this.userRepo.findOne({
       where: [{ email }, { login }],
@@ -23,7 +26,7 @@ export class UsersService {
       throw new BadRequestException(
         'User with this email/login already exists.',
       )
-    const user = new User(dto)
+    const user = new User({ ...dto, roles: Promise.resolve(dto.roles) })
     return await this.userRepo.save(user)
   }
 
@@ -57,7 +60,7 @@ export class UsersService {
       email: '',
       login: 'root',
       password: this.configService.get('ROOT_PASSWORD'),
-      roles: [rootRole],
+      roles: Promise.resolve([rootRole]),
     })
     return await this.userRepo.save(rootUser)
   }

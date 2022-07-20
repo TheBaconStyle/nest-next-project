@@ -1,7 +1,7 @@
-import { HttpErrorFilter } from './../shared/interceptors/error.filter'
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -11,16 +11,20 @@ import {
   Post,
   Query,
   Res,
+  UploadedFile,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { NextFunction, Response } from 'express'
-import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data'
-import { basename } from 'path/win32'
+import { basename } from 'path'
 import { PermissionGuard } from '../auth/guards/permission.guard'
-import { createPublicDestination } from '../shared/utils/multer.helper'
+import { configureMulter } from '../shared/utils/multer.helper'
 import { AuthorizeGuard } from './../auth/guards/authorize.guard'
+import { HttpErrorFilter } from './../shared/interceptors/error.filter'
+import { ImageMimeTypes } from './../shared/utils/multer.helper'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
@@ -33,26 +37,30 @@ export class CategoriesAPIController {
 
   @Post()
   @UseGuards(PermissionGuard(['canAddCategories']))
+  @UseInterceptors(
+    FileInterceptor(
+      'img',
+      configureMulter({
+        fileCountLimit: 1,
+        fileSizeLimit: 2 * 1024 * 1024,
+        acceptedMimeTypes: ImageMimeTypes,
+        publicPath: 'categories',
+      }),
+    ),
+  )
   @ApiConsumes('multipart/form-data')
-  @FormDataRequest({
-    storage: FileSystemStoredFile,
-    fileSystemStoragePath: createPublicDestination('categories'),
-    autoDeleteFile: false,
-  })
   async create(
-    @Body() body: CreateCategoryDto,
-    @Next() next: NextFunction,
-    @Res() res: Response,
+    @Body() dto: CreateCategoryDto,
+    @UploadedFile() img: Express.Multer.File,
   ) {
-    await this.categoriesService.create(body).catch((err) => {
-      return next(err)
-    })
-    return res.send('Created new category')
+    await this.categoriesService.create({ ...dto, img: img.path })
+    return 'Created new category'
   }
 
   @Get()
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'id', required: false, type: String })
+  @UseInterceptors(ClassSerializerInterceptor)
   async get(
     @Query('page', ParseIntPipe)
     page: number,
@@ -77,30 +85,31 @@ export class CategoriesAPIController {
   @UseFilters(new HttpErrorFilter())
   @UseGuards(PermissionGuard(['canEditCategories']))
   @ApiConsumes('multipart/form-data')
-  @FormDataRequest({
-    storage: FileSystemStoredFile,
-    fileSystemStoragePath: createPublicDestination('categories'),
-    autoDeleteFile: false,
-  })
+  @UseInterceptors(
+    FileInterceptor(
+      'img',
+      configureMulter({
+        fileCountLimit: 1,
+        fileSizeLimit: 2 * 1024 * 1024,
+        acceptedMimeTypes: ImageMimeTypes,
+        publicPath: 'categories',
+      }),
+    ),
+  )
   async update(
     @Body() dto: UpdateCategoryDto,
     @Query('id') id: string,
-    @Next() next: NextFunction,
-    @Res() res: Response,
+    @UploadedFile() img: Express.Multer.File,
   ) {
     if (!id) throw new BadRequestException('can not modify category without id')
     const category = await this.categoriesService.findOne({ id })
-    if (!category) {
-      if (dto.img) dto.img.delete()
-      return next(
-        new BadRequestException('category with this id does not exist'),
-      )
-    }
+    if (!category)
+      throw new BadRequestException('category with this id does not exist')
     await this.categoriesService.update(category, {
       name: dto.name,
-      img: dto.img ? basename(dto.img.path) : undefined,
+      img: img?.path,
     })
-    return res.send('Updated category')
+    return 'Updated category'
   }
 
   @Delete()
