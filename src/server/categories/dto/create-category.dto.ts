@@ -12,5 +12,5 @@ export class CreateCategoryDto {
     type: 'file',
     required: true,
   })
-  img?: string
+  img?: any
 }

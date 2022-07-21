@@ -5,12 +5,10 @@ import {
   Controller,
   Delete,
   Get,
-  Next,
   ParseIntPipe,
   Patch,
   Post,
   Query,
-  Res,
   UploadedFile,
   UseFilters,
   UseGuards,
@@ -18,8 +16,6 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
-import { NextFunction, Response } from 'express'
-import { basename } from 'path'
 import { PermissionGuard } from '../auth/guards/permission.guard'
 import { configureMulter } from '../shared/utils/multer.helper'
 import { AuthorizeGuard } from './../auth/guards/authorize.guard'
@@ -69,7 +65,7 @@ export class CategoriesAPIController {
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
-    if (!id || !name) {
+    if (!id && !name) {
       return await this.categoriesService.find(
         {},
         { skip: (page - 1) * size, take: size },
@@ -101,12 +97,11 @@ export class CategoriesAPIController {
     @Query('id') id: string,
     @UploadedFile() img: Express.Multer.File,
   ) {
-    if (!id) throw new BadRequestException('can not modify category without id')
+    if (!id) throw new BadRequestException('Can not modify category without id')
     const category = await this.categoriesService.findOne({ id })
-    if (!category)
-      throw new BadRequestException('category with this id does not exist')
+    if (!category) throw new BadRequestException('No category with this id')
     await this.categoriesService.update(category, {
-      name: dto.name,
+      ...dto,
       img: img?.path,
     })
     return 'Updated category'
@@ -120,7 +115,7 @@ export class CategoriesAPIController {
         'can not delete category without category id',
       )
     const category = await this.categoriesService.findOne({ id })
-    if (!category) throw new BadRequestException('no categories with this id')
+    if (!category) throw new BadRequestException('No categories with this id')
     await this.categoriesService.delete([category])
     return 'Category deleted'
   }

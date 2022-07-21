@@ -11,7 +11,6 @@ import {
   PartialFields,
   RequiredFields,
 } from './../shared/types/index'
-import { CreateCategoryDto } from './dto/create-category.dto'
 import { Category } from './entities/categories.entity'
 
 @Injectable()
@@ -57,11 +56,6 @@ export class CategoriesService {
   }
 
   async delete(categories: Category[]) {
-    // await Promise.all(
-    //   categories.map(async (category) => {
-    //     await unlink(join(createPublicDestination('categories'), category.img))
-    //   }),
-    // )
     return await this.categoriesRepo.softRemove(categories)
   }
 }

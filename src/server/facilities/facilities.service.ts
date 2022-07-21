@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { unlink } from 'fs/promises'
-import { join } from 'path'
+import { basename, join } from 'path'
 import { Repository } from 'typeorm'
 import { createPublicDestination } from '../shared/utils/multer.helper'
 import {
@@ -32,7 +32,8 @@ export class FacilitiesService {
     if (variant) {
       throw new BadRequestException('Facility with this name already exists')
     }
-    const facility = new Facility({ ...createData })
+    const img = basename(createData.img)
+    const facility = new Facility({ ...createData, img })
     return await this.facilitiesRepo.save(facility)
   }
 
@@ -56,11 +57,12 @@ export class FacilitiesService {
     >,
   ) {
     if (updateData.img) {
-      await unlink(join(createPublicDestination('facilities'), facility.img))
+      await unlink(
+        join(createPublicDestination('facilities'), facility.img),
+      ).catch((e) => console.log(e))
+      updateData.img = basename(updateData.img)
     }
-    Object.keys(updateData).forEach((key) => {
-      facility[key] = updateData[key]
-    })
+    Object.assign(facility, updateData)
     return await this.facilitiesRepo.save(facility)
   }
 
