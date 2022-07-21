@@ -41,12 +41,13 @@ export class FacilitiesService {
     return await this.facilitiesRepo.findOne(findData)
   }
 
-  async find(findData: FindMany<Facility>, pageOptions: PageOptions) {
-    return await this.facilitiesRepo.find({
+  async find(findData: FindMany<Facility>, pageOptions?: PageOptions) {
+    const result = await this.facilitiesRepo.find({
       where: findData,
       ...pageOptions,
       order: { name: 'ASC' },
     })
+    return result
   }
 
   async update(

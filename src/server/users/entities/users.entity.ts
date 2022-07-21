@@ -1,4 +1,5 @@
 import bcrypt, { hash } from 'bcrypt'
+import { Exclude } from 'class-transformer'
 import {
   BeforeInsert,
   Column,
@@ -12,7 +13,6 @@ import {
 import { Session } from '../../auth/entities/sessions.entity'
 import { Booking } from '../../bookings/entities/bookings.entity'
 import { Role } from '../../roles/entities/roles.entity'
-import { CreateUserDto } from '../dto/create-user.dto'
 
 @Entity('users')
 export class User {
@@ -46,6 +46,7 @@ export class User {
   bookings: Promise<Booking[]>
 
   @DeleteDateColumn()
+  @Exclude()
   deletedAt: Date
 
   @BeforeInsert()

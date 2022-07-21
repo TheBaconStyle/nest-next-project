@@ -61,6 +61,7 @@ export class UsersService {
       password: this.configService.get('ROOT_PASSWORD'),
       roles: Promise.resolve([rootRole]),
     })
+    console.log('created root user')
     return await this.userRepo.save(rootUser)
   }
 }

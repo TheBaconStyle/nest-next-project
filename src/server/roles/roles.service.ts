@@ -25,16 +25,13 @@ export class RolesService {
   }
 
   async findMinPriority() {
-    return (
-      (await this.roleRepo.findOne({ order: { priority: 'DESC' } })).priority |
-      1
-    )
+    const minRole = await this.roleRepo.findOne({ order: { priority: 'DESC' } })
+    return minRole ? minRole.priority : 1
   }
 
   async findMaxPriority() {
-    return (
-      (await this.roleRepo.findOne({ order: { priority: 'ASC' } })).priority | 0
-    )
+    const maxRole = await this.roleRepo.findOne({ order: { priority: 'ASC' } })
+    return maxRole ? maxRole.priority : 0
   }
 
   async findOne(roleDto: FindOne<Role>) {
@@ -65,33 +62,36 @@ export class RolesService {
       where: { name: 'root'.toUpperCase() },
     })
     if (variant) return variant
-    const rootRole = new Role({ name: 'root' })
-    rootRole.priority = await this.findMaxPriority()
-    rootRole.haveDashboardAccess = true
-    rootRole.haveDocsAccess = true
-    rootRole.haveArticlesAccess = true
-    rootRole.canAddArticles = true
-    rootRole.canEditArticles = true
-    rootRole.canDeleteArticles = true
-    rootRole.haveBookingsAccess = true
-    rootRole.canAddBookings = true
-    rootRole.canDeleteBookings = true
-    rootRole.haveCategoriesAccess = true
-    rootRole.canAddCategories = true
-    rootRole.canEditCategories = true
-    rootRole.canDeleteCategories = true
-    rootRole.haveFacilitiesAccess = true
-    rootRole.canAddFacilities = true
-    rootRole.canEditFacilities = true
-    rootRole.canDeleteFacilities = true
-    rootRole.haveRolesAccess = true
-    rootRole.canAddRoles = true
-    rootRole.canEditRoles = true
-    rootRole.canDeleteRoles = true
-    rootRole.haveUsersAccess = true
-    rootRole.canAddUsers = true
-    rootRole.canEditUsers = true
-    rootRole.canDeleteUsers = true
+    const rootRole = new Role({
+      name: 'root',
+      priority: 0,
+      haveDashboardAccess: true,
+      haveDocsAccess: true,
+      haveArticlesAccess: true,
+      canAddArticles: true,
+      canEditArticles: true,
+      canDeleteArticles: true,
+      haveBookingsAccess: true,
+      canAddBookings: true,
+      canDeleteBookings: true,
+      haveCategoriesAccess: true,
+      canAddCategories: true,
+      canEditCategories: true,
+      canDeleteCategories: true,
+      haveFacilitiesAccess: true,
+      canAddFacilities: true,
+      canEditFacilities: true,
+      canDeleteFacilities: true,
+      haveRolesAccess: true,
+      canAddRoles: true,
+      canEditRoles: true,
+      canDeleteRoles: true,
+      haveUsersAccess: true,
+      canAddUsers: true,
+      canEditUsers: true,
+      canDeleteUsers: true,
+    })
+    console.log('created root role')
     return await this.roleRepo.save(rootRole)
   }
 
@@ -100,11 +100,14 @@ export class RolesService {
       where: { name: 'basic'.toUpperCase() },
     })
     if (variant) return variant
-    const rootRole = new Role({ name: 'basic' })
-    rootRole.priority = (await this.findMinPriority()) + 1
-    rootRole.canAddBookings = true
-    rootRole.canDeleteBookings = true
-    return await this.roleRepo.save(rootRole)
+    const minPriority = await this.findMinPriority()
+    const basicRole = new Role({
+      name: 'basic',
+      priority: minPriority === 0 ? 1 : minPriority,
+      canAddBookings: true,
+      canDeleteBookings: true,
+    })
+    return await this.roleRepo.save(basicRole)
   }
 
   async getRootRole() {

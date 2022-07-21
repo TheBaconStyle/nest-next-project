@@ -58,6 +58,10 @@ export class FacilitiesAPIController {
       await unlink(img.path)
       throw new BadRequestException('Category with this id does not exists')
     }
+    const facility = await this.facilitiesService.findOne({ name: dto.name })
+    if (facility) {
+      throw new BadRequestException('Facility with this name already exists')
+    }
     await this.facilitiesService.create({ ...dto, category, img: img.path })
     return 'Created new facility'
   }
@@ -82,20 +86,18 @@ export class FacilitiesAPIController {
         { skip: (page - 1) * size, take: size },
       )
     }
-    const findByCategory = { category: undefined }
+    const findByCategory = { category: null }
     if (category) {
       const findCategory = await this.categoriesService.findOne({
         id: category,
       })
       findByCategory.category = findCategory
     }
-    return await this.facilitiesService.find(
+    const result = await this.facilitiesService.find(
       [{ id }, { name }, findByCategory],
-      {
-        skip: (page - 1) * size,
-        take: size,
-      },
+      { skip: (page - 1) * size, take: size },
     )
+    return result
   }
 
   @Patch()

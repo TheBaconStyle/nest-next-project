@@ -1,16 +1,20 @@
-import { Facility } from './../../facilities/entities/facilities.entity'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDate } from 'class-validator'
+import { Transform } from 'class-transformer'
+import { IsDate, IsString } from 'class-validator'
+import dayjs from 'dayjs'
 
 export class CreateBookDto {
-  @ApiProperty()
   @IsDate()
+  @ApiProperty()
+  @Transform(({ value }) => new Date(value))
   from: Date
 
   @IsDate()
   @ApiProperty()
+  @Transform(({ value }) => new Date(value))
   to: Date
 
+  @IsString()
   @ApiProperty()
   facility: string
 }
