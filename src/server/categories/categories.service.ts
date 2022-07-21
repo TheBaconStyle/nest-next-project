@@ -22,6 +22,7 @@ export class CategoriesService {
   async create(createData: RequiredFields<Category, 'name' | 'img'>) {
     const variant = await this.categoriesRepo.findOne({ name: createData.name })
     if (variant) {
+      await unlink(createData.img)
       throw new BadRequestException('Category with this name already exists')
     }
     const img = basename(createData.img)

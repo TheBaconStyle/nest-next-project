@@ -12,5 +12,5 @@ export class CreateBookDto {
   to: Date
 
   @ApiProperty()
-  facility: Facility
+  facility: string
 }

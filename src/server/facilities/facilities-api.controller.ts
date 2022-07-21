@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { unlink } from 'fs/promises'
 import { PermissionGuard } from '../auth/guards/permission.guard'
 import { configureMulter, ImageMimeTypes } from '../shared/utils/multer.helper'
 import { AuthorizeGuard } from './../auth/guards/authorize.guard'
@@ -27,13 +28,13 @@ import { FacilitiesService } from './facilities.service'
 
 @Controller('api/facilities')
 @ApiTags('facilities')
-@ApiConsumes('multipart/form-data')
 @UseGuards(AuthorizeGuard)
 export class FacilitiesAPIController {
   constructor(
     private readonly facilitiesService: FacilitiesService,
     private readonly categoriesService: CategoriesService,
   ) {}
+
   @Post()
   @UseGuards(PermissionGuard(['canAddFacilities']))
   @UseInterceptors(
@@ -47,13 +48,16 @@ export class FacilitiesAPIController {
       }),
     ),
   )
+  @ApiConsumes('multipart/form-data')
   async crate(
     @Body() dto: CreateFacilityDto,
     @UploadedFile() img: Express.Multer.File,
   ) {
     const category = this.categoriesService.findOne({ id: dto.category })
-    if (!category)
+    if (!(await category)) {
+      await unlink(img.path)
       throw new BadRequestException('Category with this id does not exists')
+    }
     await this.facilitiesService.create({ ...dto, category, img: img.path })
     return 'Created new facility'
   }
@@ -80,7 +84,9 @@ export class FacilitiesAPIController {
     }
     const findByCategory = { category: undefined }
     if (category) {
-      const findCategory = this.categoriesService.findOne({ id: category })
+      const findCategory = await this.categoriesService.findOne({
+        id: category,
+      })
       findByCategory.category = findCategory
     }
     return await this.facilitiesService.find(
@@ -118,7 +124,12 @@ export class FacilitiesAPIController {
     const updateData = { ...dto, img: img?.path, category: facility.category }
     if (dto.category) {
       const category = this.categoriesService.findOne({ id: dto.category })
+      if (!(await category)) {
+        await unlink(img.path)
+        throw new BadRequestException('No category with this id')
+      }
       updateData.category = category
+      console.log((await updateData.category).id)
     }
     await this.facilitiesService.update(facility, updateData)
     return 'Updated facility'

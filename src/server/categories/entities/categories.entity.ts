@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Facility } from './../../facilities/entities/facilities.entity'
-import { RequiredFields } from './../../shared/types/index'
 
 @Entity('categories')
 export class Category {
@@ -18,7 +17,7 @@ export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column()
+  @Column({ unique: true })
   name: string
 
   @Column()

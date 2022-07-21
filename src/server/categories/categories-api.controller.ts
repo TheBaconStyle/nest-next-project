@@ -49,7 +49,8 @@ export class CategoriesAPIController {
     @Body() dto: CreateCategoryDto,
     @UploadedFile() img: Express.Multer.File,
   ) {
-    await this.categoriesService.create({ ...dto, img: img.path })
+    console.log(dto)
+    // await this.categoriesService.create({ ...dto, img: img.path })
     return 'Created new category'
   }
 
