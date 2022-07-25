@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { Exclude } from 'class-transformer'
 import { User } from 'src/server/users/entities/users.entity'
 import {
   Column,
@@ -8,11 +8,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Facility } from './../../facilities/entities/facilities.entity'
-import { CreateBookDto } from './../dto/create-book.dto'
 
 @Entity('bookings')
 export class Booking {
-  constructor(dto?: CreateBookDto & { user: User }) {
+  constructor(dto?: Partial<Booking>) {
     Object.assign(this, dto)
   }
 
@@ -32,5 +31,6 @@ export class Booking {
   facility: Promise<Facility>
 
   @DeleteDateColumn()
+  @Exclude()
   deletedAt: Date
 }

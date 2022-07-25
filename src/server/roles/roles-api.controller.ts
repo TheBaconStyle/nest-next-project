@@ -39,6 +39,8 @@ export class RolesAPIController {
   @Get()
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'id', required: false, type: String })
+  @ApiQuery({ name: 'page', required: true, type: Number })
+  @ApiQuery({ name: 'size', required: true, type: Number })
   async get(
     @Query('page', ParseIntPipe)
     page: number,

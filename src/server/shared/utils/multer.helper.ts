@@ -41,6 +41,7 @@ interface MulterConfig {
   fileCountLimit: number
   fileSizeLimit: number
 }
+
 export function configureMulter(config: MulterConfig): MulterOptions {
   return {
     storage: configureStorage(config.publicPath),

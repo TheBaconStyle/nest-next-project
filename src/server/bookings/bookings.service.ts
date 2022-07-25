@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import dayjs from 'dayjs'
-import { User } from 'src/server/users/entities/users.entity'
 import { Between, Repository } from 'typeorm'
-import { PageOptions } from '../shared/types'
-import { RequiredFields } from './../shared/types/index'
+import {
+  FindMany,
+  FindOne,
+  PageOptions,
+  RequiredFields,
+} from './../shared/types/index'
 import { Booking } from './entities/bookings.entity'
 
 @Injectable()
@@ -16,13 +19,42 @@ export class BookingsService {
 
   async create(
     dto: RequiredFields<Booking, 'from' | 'to' | 'facility' | 'user'>,
-  ) {}
-
-  async canBook(user: User, max: number) {
-    return (await this.bookingRepo.count({ where: { user } })) <= max
+  ) {
+    dto.from = dayjs(dto.from).startOf('hour').toDate()
+    const fromDate = dto.from.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
+    dto.to = dayjs(dto.to).startOf('hour').toDate()
+    const toDate = dto.to.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
+    const variants = await this.find([
+      {
+        from: Between(fromDate, toDate),
+        facility: await dto.facility,
+      },
+      {
+        to: Between(fromDate, toDate),
+        facility: await dto.facility,
+      },
+    ])
+    if (variants.length > 0) {
+      throw new BadRequestException(
+        'Your booking time is crossing another booking',
+      )
+    }
+    const booking = new Booking({ ...dto })
+    return await this.bookingRepo.save(booking)
   }
 
-  async deleteById(id: string) {
-    return await this.bookingRepo.delete({ id })
+  async findOne(findData: FindOne<Booking>) {
+    return await this.bookingRepo.findOne(findData)
+  }
+  async find(findData: FindMany<Booking>, pageOptions?: PageOptions) {
+    return await this.bookingRepo.find({
+      where: findData,
+      ...pageOptions,
+      order: { from: 'ASC' },
+    })
+  }
+
+  async delete(bookings: Booking[]) {
+    return await this.bookingRepo.softRemove(bookings)
   }
 }

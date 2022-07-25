@@ -70,6 +70,8 @@ export class FacilitiesAPIController {
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'id', required: false, type: String })
   @ApiQuery({ name: 'category', required: false, type: String })
+  @ApiQuery({ name: 'page', required: true, type: Number })
+  @ApiQuery({ name: 'size', required: true, type: Number })
   @UseInterceptors(ClassSerializerInterceptor)
   async get(
     @Query('page', ParseIntPipe)
