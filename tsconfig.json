@@ -25,7 +25,13 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": { "classnameTransform": "dashes" }
+      }
+    ]
   },
   "include": ["next-env.d.ts", "**/**.ts", "**/**.tsx"],
   "exclude": ["node_modules", "dist", ".next", "database", ".vscode"]

@@ -1,13 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { unlink } from 'fs/promises'
-import { basename, join } from 'path'
-import { Repository, Not, IsNull } from 'typeorm'
-import { createPublicDestination } from '../shared/utils/multer.helper'
+import { Repository } from 'typeorm'
 import {
   FindMany,
   FindOne,
-  PageOptions,
   PartialFields,
   RequiredFields,
 } from './../shared/types/index'
@@ -26,28 +22,30 @@ export class FacilitiesService {
       'name' | 'img' | 'description' | 'category'
     >,
   ) {
-    const variant = await this.facilitiesRepo.findOne({
-      name: createData.name,
-    })
-    if (variant) {
-      throw new BadRequestException('Facility with this name already exists')
-    }
-    const img = basename(createData.img)
-    const facility = new Facility({ ...createData, img })
-    return await this.facilitiesRepo.save(facility)
+    // const variant = await this.facilitiesRepo.findOne({
+    //   where: {
+    //     name: createData.name,
+    //   },
+    // })
+    // if (variant) {
+    //   throw new BadRequestException('Facility with this name already exists')
+    // }
+    // const img = basename(createData.img)
+    // const facility = new Facility({ ...createData, img })
+    // return await this.facilitiesRepo.save(facility)
   }
 
   async findOne(findData: FindOne<Facility>) {
-    return await this.facilitiesRepo.findOne(findData)
+    // return await this.facilitiesRepo.findOne(findData)
   }
 
-  async find(findData: FindMany<Facility>, pageOptions?: PageOptions) {
-    const result = await this.facilitiesRepo.find({
-      where: findData,
-      ...pageOptions,
-      order: { name: 'ASC' },
-    })
-    return result
+  async find(findData: FindMany<Facility>) {
+    // const result = await this.facilitiesRepo.find({
+    //   where: findData,
+    //   ...pageOptions,
+    //   order: { name: 'ASC' },
+    // })
+    // return result
   }
 
   async update(
@@ -57,17 +55,17 @@ export class FacilitiesService {
       'name' | 'img' | 'category' | 'description'
     >,
   ) {
-    if (updateData.img) {
-      await unlink(
-        join(createPublicDestination('facilities'), facility.img),
-      ).catch((e) => console.log(e))
-      updateData.img = basename(updateData.img)
-    }
-    Object.assign(facility, updateData)
-    return await this.facilitiesRepo.save(facility)
+    // if (updateData.img) {
+    //   await unlink(
+    //     join(createPublicDestination('facilities'), facility.img),
+    //   ).catch((e) => console.log(e))
+    //   updateData.img = basename(updateData.img)
+    // }
+    // Object.assign(facility, updateData)
+    // return await this.facilitiesRepo.save(facility)
   }
 
   async delete(categories: Facility[]) {
-    return await this.facilitiesRepo.softRemove(categories)
+    // return await this.facilitiesRepo.softRemove(categories)
   }
 }

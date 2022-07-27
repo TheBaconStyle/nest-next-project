@@ -13,5 +13,5 @@
     "**/.yarn": true
   },
   "files.eol": "\n",
-  "cSpell.words": ["dtos"]
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,31 +1,16 @@
-import dayjs from 'dayjs'
 import { GetServerSideProps } from 'next/types'
+import { Header } from 'src/client/components/Header/Header'
 
-interface PageProps {
-  qwe: string
-  ewq: string
-}
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  _context,
-) => {
-  const qwe = dayjs().startOf('hour').toDate().toLocaleString()
-  const ewq = dayjs().add(1, 'month').startOf('hour').toDate().toString()
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   return {
-    props: { qwe, ewq },
+    props: {},
   }
 }
 
-export default function HomePage(props: PageProps) {
+export default function HomePage() {
   return (
     <>
-      <h1 className="bg-green-500">{props.qwe}</h1>
-      10:00 <br />
-      11:00 <br />
-      12:00 <br />
-      13:00 <br />
-      14:00 <br />
-      <h1 className="bg-green-500">{props.ewq}</h1>
+      <Header></Header>
     </>
   )
 }

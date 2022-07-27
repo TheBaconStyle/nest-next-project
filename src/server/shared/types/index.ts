@@ -1,7 +1,6 @@
+import { FindManyOptions, FindOneOptions } from 'typeorm'
 import { FingerprintData } from '@shwao/express-fingerprint'
-import { IsNumber, ValidationArguments } from 'class-validator'
 import { Request } from 'express'
-import { FindConditions } from 'typeorm'
 
 export type RequiredFields<T, K extends keyof T> = Required<Pick<T, K>>
 
@@ -10,36 +9,15 @@ export type PartialFields<T, K extends keyof T> = Partial<Pick<T, K>>
 export type MutableFields<T, K extends keyof T> = Partial<Omit<T, K>>
 
 export type UnmutableFields<T, K extends keyof T> = Required<Pick<T, K>>
-
-export type FindOne<T = any> = FindConditions<T>
-export type FindMany<T = any> = FindConditions<T> | FindConditions<T>[]
-
 export interface IReqFingerprint extends Request {
   fingerprint: FingerprintData
 }
 
-export interface PageOptions {
-  skip: number
-  take: number
-}
+export type FindOne<T> = FindOneOptions<T>['where']
 
-const isNumberValError = (valArgs: ValidationArguments) =>
-  `${valArgs.property} query param must be a number`
-export class PageDto {
-  @IsNumber(null, {
-    message: isNumberValError,
-  })
-  page: number
+export type FindMany<T> = Partial<{
+  where: FindManyOptions<T>['where']
+  page: Pick<FindManyOptions<T>, 'skip' | 'take'>
+}>
 
-  @IsNumber(null, {
-    message: isNumberValError,
-  })
-  size: number
-
-  getPageOptions(): PageOptions {
-    return {
-      skip: (this.page - 1) * this.size,
-      take: this.size,
-    }
-  }
-}
+export type OneOrMany<T> = T | T[]

@@ -51,11 +51,11 @@ async function bootstrap() {
       return res.render('404')
     },
   )
-  const rolesService = app.get(RolesService)
-  await rolesService.createBasicRole()
-  const rootRole = await rolesService.createRootRole()
-  const usersService = app.get(UsersService)
-  usersService.createRootUser(rootRole)
+  // const rolesService = app.get(RolesService)
+  // await rolesService.createBasicRole()
+  // const rootRole = await rolesService.createRootRole()
+  // const usersService = app.get(UsersService)
+  // usersService.createRootUser(rootRole)
   const PORT = config.get('PORT')
   await app.listen(PORT, () => {
     console.log(colors.green(`Server started at http://localhost:${PORT}`))
