@@ -13,7 +13,6 @@ export type UnmutableFields<T, K extends keyof T> = Required<Pick<T, K>>
 
 export type FindOne<T = any> = FindConditions<T>
 export type FindMany<T = any> = FindConditions<T> | FindConditions<T>[]
-
 export interface IReqFingerprint extends Request {
   fingerprint: FingerprintData
 }

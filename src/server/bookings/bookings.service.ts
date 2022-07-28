@@ -20,41 +20,62 @@ export class BookingsService {
   async create(
     dto: RequiredFields<Booking, 'from' | 'to' | 'facility' | 'user'>,
   ) {
-    dto.from = dayjs(dto.from).startOf('hour').toDate()
-    const fromDate = dto.from.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
-    dto.to = dayjs(dto.to).startOf('hour').toDate()
-    const toDate = dto.to.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
-    const variants = await this.find([
-      {
-        from: Between(fromDate, toDate),
-        facility: await dto.facility,
-      },
-      {
-        to: Between(fromDate, toDate),
-        facility: await dto.facility,
-      },
-    ])
-    if (variants.length > 0) {
-      throw new BadRequestException(
-        'Your booking time is crossing another booking',
-      )
-    }
-    const booking = new Booking({ ...dto })
-    return await this.bookingRepo.save(booking)
+    // dto.from = dayjs(dto.from).startOf('hour').toDate()
+    // const fromDate = dto.from.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
+    // dto.to = dayjs(dto.to).startOf('hour').toDate()
+    // const toDate = dto.to.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
+    // const variants = await this.find([
+    //   {
+    //     from: Between(fromDate, toDate),
+    //     facility: await dto.facility,
+    //   },
+    //   {
+    //     to: Between(fromDate, toDate),
+    //     facility: await dto.facility,
+    //   },
+    // ])
+    // if (variants.length > 0) {
+    //   throw new BadRequestException(
+    //     'Your booking time is crossing another booking',
+    //   )
+    // }
+    // const booking = new Booking({ ...dto })
+    // return await this.bookingRepo.save(booking)
   }
 
   async findOne(findData: FindOne<Booking>) {
-    return await this.bookingRepo.findOne(findData)
+    // return await this.bookingRepo.findOne(findData)
   }
   async find(findData: FindMany<Booking>, pageOptions?: PageOptions) {
-    return await this.bookingRepo.find({
-      where: findData,
-      ...pageOptions,
-      order: { from: 'ASC' },
-    })
+    // return await this.bookingRepo.find({
+    //   where: findData,
+    //   ...pageOptions,
+    // dto.from = dayjs(dto.from).startOf('hour').toDate()
+    // const fromDate = dto.from.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
+    // dto.to = dayjs(dto.to).startOf('hour').toDate()
+    // const toDate = dto.to.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
+    // const variants = await this.find({
+    //   where: [
+    //     {
+    //       from: Between(fromDate, toDate),
+    //       facility: await dto.facility,
+    //     },
+    //     {
+    //       to: Between(fromDate, toDate),
+    //       facility: await dto.facility,
+    //     },
+    //   ],
+    // })
+    // if (variants.length > 0) {
+    //   throw new BadRequestException(
+    //     'Your booking time is crossing another booking',
+    //   )
+    // }
+    // const booking = new Booking({ ...dto })
+    // return await this.bookingRepo.save(booking)
   }
 
   async delete(bookings: Booking[]) {
-    return await this.bookingRepo.softRemove(bookings)
+    // return await this.bookingRepo.softRemove(bookings)
   }
 }
