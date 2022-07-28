@@ -17,7 +17,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "strict": false,
     "noEmit": true,
@@ -29,10 +33,22 @@
     "plugins": [
       {
         "name": "typescript-plugin-css-modules",
-        "options": { "classnameTransform": "dashes" }
+        "options": {
+          "classnameTransform": "dashes"
+        }
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/**.ts", "**/**.tsx"],
-  "exclude": ["node_modules", "dist", ".next", "database", ".vscode"]
+  "include": [
+    "next-env.d.ts",
+    "**/**.ts",
+    "**/**.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next",
+    "database",
+    ".vscode"
+  ]
 }

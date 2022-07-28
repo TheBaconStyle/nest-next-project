@@ -11,9 +11,7 @@ import colors from 'colors'
 import { Request, Response } from 'express'
 import { RenderService } from 'nest-next'
 import { AppModule } from './app.module'
-import { RolesService } from './roles/roles.service'
 import { ProtectDocs } from './shared/middlewares/protect-docs.middleware'
-import { UsersService } from './users/users.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)

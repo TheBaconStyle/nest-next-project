@@ -11,9 +11,8 @@ export class BookingsService {
     private readonly bookingRepo: Repository<Booking>,
   ) {}
 
-  async create(
-    dto: RequiredFields<Booking, 'from' | 'to' | 'facility' | 'user'>,
-  ) {
+  async create() {
+    // dto: RequiredFields<Booking, 'from' | 'to' | 'facility' | 'user'>,
     // dto.from = dayjs(dto.from).startOf('hour').toDate()
     // const fromDate = dto.from.toISOString().replace(/T/g, ' ').replace(/Z/g, '')
     // dto.to = dayjs(dto.to).startOf('hour').toDate()
@@ -37,17 +36,18 @@ export class BookingsService {
     // }
     // const booking = new Booking({ ...dto })
     // return await this.bookingRepo.save(booking)
+    console.log('qwe')
   }
 
   async findOne(findData: FindOne<Booking>) {
-    return await this.bookingRepo.findOne({ where: findData })
+    // return await this.bookingRepo.findOne({ where: findData })
   }
   async find(findData: FindMany<Booking>) {
-    return await this.bookingRepo.find({
-      where: findData.where,
-      ...findData.page,
-      order: { from: 'ASC' },
-    })
+    // return await this.bookingRepo.find({
+    //   where: findData.where,
+    //   ...findData.page,
+    //   order: { from: 'ASC' },
+    // })
   }
 
   async delete(bookings: Booking | Booking[]) {
