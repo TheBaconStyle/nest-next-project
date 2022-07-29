@@ -8,8 +8,6 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Session } from '../entities/sessions.entity'
-import { CreateSessionDto } from './../dto/create-session.dto'
-import { UpdateSessionDto } from './../dto/update-session.dto'
 
 @Injectable()
 export class SessionsService {
@@ -20,7 +18,7 @@ export class SessionsService {
 
   async create(sessionDto: RequiredFields<Session, 'hash' | 'name' | 'user'>) {
     const session = new Session(sessionDto)
-    return await this.sessionRepo.save([session])
+    return await this.sessionRepo.save(session)
   }
 
   async findOne(findData: FindOne<Session>) {
@@ -46,7 +44,7 @@ export class SessionsService {
     return await this.sessionRepo.remove(variants)
   }
 
-  async update(hash: string, opts: Partial<UpdateSessionDto>) {
+  async update(hash: string, opts: Partial<Session>) {
     return await this.sessionRepo.update({ hash }, opts)
   }
 }

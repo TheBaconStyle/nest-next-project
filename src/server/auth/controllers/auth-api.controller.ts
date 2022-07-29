@@ -1,3 +1,4 @@
+import type { IReqFingerprint } from './../../shared/types/index'
 import {
   Body,
   Controller,
@@ -8,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { IReqFingerprint } from '../../shared/types'
 import { RegisterDto } from '../dto/register-user.dto'
 import { SignInDto } from '../dto/signin-user.dto'
 import { AuthorizeGuard } from './../guards/authorize.guard'

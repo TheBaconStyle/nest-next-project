@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { unlink } from 'fs/promises'
 import { basename, join } from 'path'
-import { Repository, Not, IsNull } from 'typeorm'
+import { Repository } from 'typeorm'
 import { createPublicDestination } from '../shared/utils/multer.helper'
 import {
   FindMany,
