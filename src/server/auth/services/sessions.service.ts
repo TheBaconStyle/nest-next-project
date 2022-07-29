@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   FindOne,
   RequiredFields,
@@ -9,6 +10,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Session } from '../entities/sessions.entity'
 import { CreateSessionDto } from './../dto/create-session.dto'
+=======
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm'
+import { Session } from '../entities/sessions.entity'
+import { RequiredFields } from './../../shared/types/index'
+>>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
 import { UpdateSessionDto } from './../dto/update-session.dto'
 
 @Injectable()
@@ -19,10 +27,11 @@ export class SessionsService {
   ) {}
 
   async create(sessionDto: RequiredFields<Session, 'hash' | 'name' | 'user'>) {
-    const session = new Session(sessionDto)
-    return await this.sessionRepo.save([session])
+    // const session = new Session(sessionDto)
+    // return await this.sessionRepo.save([session])
   }
 
+<<<<<<< HEAD
   async findOne(findData: FindOne<Session>) {
     return await this.sessionRepo.findOne({
       where: findData,
@@ -44,9 +53,26 @@ export class SessionsService {
       variants.push(sessions)
     }
     return await this.sessionRepo.remove(variants)
+=======
+  async findOne(sessionDto: FindOneOptions<Session>['where']) {
+    // return await this.sessionRepo.findOne({
+    //   where: sessionDto,
+    //   relations: ['user', 'user.roles'],
+    // })
+  }
+
+  async find(sessionDtos: FindManyOptions<Session>['where']) {
+    // return await this.sessionRepo.find({
+    //   where: sessionDtos,
+    // })
+  }
+
+  async delete(session: Session) {
+    // return await this.sessionRepo.remove([session])
+>>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   }
 
   async update(hash: string, opts: Partial<UpdateSessionDto>) {
-    return await this.sessionRepo.update({ hash }, opts)
+    // return await this.sessionRepo.update({ hash }, opts)
   }
 }

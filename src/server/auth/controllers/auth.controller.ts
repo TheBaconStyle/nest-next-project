@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import { Controller, Get, Req, UseGuards } from '@nestjs/common'
 import { ApiExcludeController } from '@nestjs/swagger'
-import { IReqFingerprint } from '../../shared/types'
+import type { IReqFingerprint } from '../../shared/types'
 import { UnautnenticatedGuard } from '../guards/unauthenticated.guard'
 import { AuthorizeGuard } from './../guards/authorize.guard'
 
