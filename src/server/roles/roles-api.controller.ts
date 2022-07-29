@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common'
 import { ApiQuery, ApiTags } from '@nestjs/swagger'
 import { Role } from 'src/server/roles/entities/roles.entity'
@@ -68,7 +68,7 @@ export class RolesAPIController {
   }
 
   @Patch()
-  // @UseGuards(PermissionGuard(['canEditRoles']))
+  @UseGuards(PermissionGuard(['canEditRoles']))
   async update(
     @Query('id') id: string,
     @Body() changes: UpdateRoleDto,

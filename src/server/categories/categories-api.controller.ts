@@ -29,12 +29,12 @@ import { Category } from './entities/categories.entity'
 
 @Controller('api/categories')
 @ApiTags('categories')
-// @UseGuards(AuthorizeGuard)
+@UseGuards(AuthorizeGuard)
 export class CategoriesAPIController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  // @UseGuards(PermissionGuard(['canAddCategories']))
+  @UseGuards(PermissionGuard(['canAddCategories']))
   @UseInterceptors(
     FileInterceptor(
       'img',
@@ -51,7 +51,7 @@ export class CategoriesAPIController {
     @Body() dto: CreateCategoryDto,
     @UploadedFile() img: Express.Multer.File,
   ) {
-    // await this.categoriesService.create({ ...dto, img: img.path })
+    await this.categoriesService.create({ ...dto, img: img.path })
     return 'Created new category'
   }
 
@@ -82,7 +82,7 @@ export class CategoriesAPIController {
 
   @Patch()
   @UseFilters(new HttpErrorFilter())
-  // @UseGuards(PermissionGuard(['canEditCategories']))
+  @UseGuards(PermissionGuard(['canEditCategories']))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor(
@@ -111,7 +111,7 @@ export class CategoriesAPIController {
   }
 
   @Delete()
-  // @UseGuards(PermissionGuard(['canDeleteCategories']))
+  @UseGuards(PermissionGuard(['canDeleteCategories']))
   async delete(@Query('id') id: string) {
     if (!id)
       throw new BadRequestException(
