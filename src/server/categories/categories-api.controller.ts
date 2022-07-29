@@ -29,12 +29,12 @@ import { Category } from './entities/categories.entity'
 
 @Controller('api/categories')
 @ApiTags('categories')
-@UseGuards(AuthorizeGuard)
+// @UseGuards(AuthorizeGuard)
 export class CategoriesAPIController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  @UseGuards(PermissionGuard(['canAddCategories']))
+  // @UseGuards(PermissionGuard(['canAddCategories']))
   @UseInterceptors(
     FileInterceptor(
       'img',
@@ -51,7 +51,7 @@ export class CategoriesAPIController {
     @Body() dto: CreateCategoryDto,
     @UploadedFile() img: Express.Multer.File,
   ) {
-    await this.categoriesService.create({ ...dto, img: img.path })
+    // await this.categoriesService.create({ ...dto, img: img.path })
     return 'Created new category'
   }
 
@@ -69,6 +69,7 @@ export class CategoriesAPIController {
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
+<<<<<<< HEAD
     const findData: FindMany<Category> = {
       where: {},
       skip: (page - 1) * size,
@@ -78,11 +79,23 @@ export class CategoriesAPIController {
       findData.where = [{ id }, { name }]
     }
     return await this.categoriesService.find(findData)
+=======
+    // if (!id && !name) {
+    //   return await this.categoriesService.find(
+    //     {},
+    //     { skip: (page - 1) * size, take: size },
+    //   )
+    // }
+    // return await this.categoriesService.find([{ id }, { name }], {
+    //   skip: (page - 1) * size,
+    //   take: size,
+    // })
+>>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   }
 
   @Patch()
   @UseFilters(new HttpErrorFilter())
-  @UseGuards(PermissionGuard(['canEditCategories']))
+  // @UseGuards(PermissionGuard(['canEditCategories']))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor(
@@ -100,6 +113,7 @@ export class CategoriesAPIController {
     @Query('id') id: string,
     @UploadedFile() img: Express.Multer.File,
   ) {
+<<<<<<< HEAD
     if (!id) throw new BadRequestException('Can not modify category without id')
     const category = await this.categoriesService.findOne({ id })
     if (!category) throw new BadRequestException('No category with this id')
@@ -108,11 +122,22 @@ export class CategoriesAPIController {
       img: img?.path,
     })
     return 'Category updated '
+=======
+    // if (!id) throw new BadRequestException('Can not modify category without id')
+    // const category = await this.categoriesService.findOne({ id })
+    // if (!category) throw new BadRequestException('No category with this id')
+    // await this.categoriesService.update(category, {
+    //   ...dto,
+    //   img: img?.path,
+    // })
+    return 'Updated category'
+>>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   }
 
   @Delete()
-  @UseGuards(PermissionGuard(['canDeleteCategories']))
+  // @UseGuards(PermissionGuard(['canDeleteCategories']))
   async delete(@Query('id') id: string) {
+<<<<<<< HEAD
     if (!id)
       throw new BadRequestException(
         'can not delete category without category id',
@@ -120,6 +145,15 @@ export class CategoriesAPIController {
     const category = await this.categoriesService.findOne({ id })
     if (!category) throw new BadRequestException('No categories with this id')
     await this.categoriesService.delete(category)
+=======
+    // if (!id)
+    //   throw new BadRequestException(
+    //     'can not delete category without category id',
+    //   )
+    // const category = await this.categoriesService.findOne({ id })
+    // if (!category) throw new BadRequestException('No categories with this id')
+    // await this.categoriesService.delete([category])
+>>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
     return 'Category deleted'
   }
 }
