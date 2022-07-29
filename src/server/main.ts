@@ -11,7 +11,9 @@ import colors from 'colors'
 import { Request, Response } from 'express'
 import { RenderService } from 'nest-next'
 import { AppModule } from './app.module'
+import { RolesService } from './roles/roles.service'
 import { ProtectDocs } from './shared/middlewares/protect-docs.middleware'
+import { UsersService } from './users/users.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -49,11 +51,11 @@ async function bootstrap() {
       return res.render('404')
     },
   )
-  // const rolesService = app.get(RolesService)
-  // await rolesService.createBasicRole()
-  // const rootRole = await rolesService.createRootRole()
-  // const usersService = app.get(UsersService)
-  // usersService.createRootUser(rootRole)
+  const rolesService = app.get(RolesService)
+  await rolesService.createBasicRole()
+  const rootRole = await rolesService.createRootRole()
+  const usersService = app.get(UsersService)
+  usersService.createRootUser(rootRole)
   const PORT = config.get('PORT')
   await app.listen(PORT, () => {
     console.log(colors.green(`Server started at http://localhost:${PORT}`))

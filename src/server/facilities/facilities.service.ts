@@ -1,20 +1,13 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-<<<<<<< HEAD
 import { unlink } from 'fs/promises'
 import { basename, join } from 'path'
 import { Repository } from 'typeorm'
 import { createPublicDestination } from '../shared/utils/multer.helper'
-=======
-import { Repository } from 'typeorm'
->>>>>>> 4862632d8b63953f2afe5f11fa87376f9ffbe1fb
 import {
   FindMany,
   FindOne,
-<<<<<<< HEAD
   OneOrMany,
-=======
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   PartialFields,
   RequiredFields,
 } from './../shared/types/index'
@@ -33,7 +26,6 @@ export class FacilitiesService {
       'name' | 'img' | 'description' | 'category'
     >,
   ) {
-<<<<<<< HEAD
     const variant = await this.findOne({
       name: createData.name,
     })
@@ -55,32 +47,6 @@ export class FacilitiesService {
       order: { name: 'ASC' },
     })
     return result
-=======
-    // const variant = await this.facilitiesRepo.findOne({
-    //   where: {
-    //     name: createData.name,
-    //   },
-    // })
-    // if (variant) {
-    //   throw new BadRequestException('Facility with this name already exists')
-    // }
-    // const img = basename(createData.img)
-    // const facility = new Facility({ ...createData, img })
-    // return await this.facilitiesRepo.save(facility)
-  }
-
-  async findOne(findData: FindOne<Facility>) {
-    // return await this.facilitiesRepo.findOne(findData)
-  }
-
-  async find(findData: FindMany<Facility>) {
-    // const result = await this.facilitiesRepo.find({
-    //   where: findData,
-    //   ...pageOptions,
-    //   order: { name: 'ASC' },
-    // })
-    // return result
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   }
 
   async update(
@@ -90,17 +56,16 @@ export class FacilitiesService {
       'name' | 'img' | 'category' | 'description'
     >,
   ) {
-    // if (updateData.img) {
-    //   await unlink(
-    //     join(createPublicDestination('facilities'), facility.img),
-    //   ).catch((e) => console.log(e))
-    //   updateData.img = basename(updateData.img)
-    // }
-    // Object.assign(facility, updateData)
-    // return await this.facilitiesRepo.save(facility)
+    if (updateData.img) {
+      await unlink(
+        join(createPublicDestination('facilities'), facility.img),
+      ).catch((e) => console.log(e))
+      updateData.img = basename(updateData.img)
+    }
+    Object.assign(facility, updateData)
+    return await this.facilitiesRepo.save(facility)
   }
 
-<<<<<<< HEAD
   async delete(facilities: OneOrMany<Facility>) {
     const variants: Facility[] = []
     if (Array.isArray(facilities)) {
@@ -109,9 +74,5 @@ export class FacilitiesService {
       variants.push(facilities)
     }
     return await this.facilitiesRepo.softRemove(variants)
-=======
-  async delete(categories: Facility[]) {
-    // return await this.facilitiesRepo.softRemove(categories)
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   }
 }

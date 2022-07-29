@@ -1,38 +1,40 @@
-import { Role } from 'src/server/roles/entities/roles.entity'
-import { FindMany } from './../shared/types/index'
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   ParseIntPipe,
   Patch,
   Post,
   Query,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common'
 import { ApiQuery, ApiTags } from '@nestjs/swagger'
+import { Role } from 'src/server/roles/entities/roles.entity'
+import { AuthorizeGuard } from '../auth/guards/authorize.guard'
 import { PermissionGuard } from '../auth/guards/permission.guard'
 import { ReqUser } from '../shared/decorators/user-from-request.decorator'
-import { AuthorizeGuard } from './../auth/guards/authorize.guard'
+import { FindMany } from './../shared/types/index'
 import { User } from './../users/entities/users.entity'
 import { CreateRoleDto } from './dto/create-role.dto'
 import { UpdateRoleDto } from './dto/update-role.dto'
 import { RolesService } from './roles.service'
 
 @Controller('api/roles')
-// @UseGuards(AuthorizeGuard, PermissionGuard(['haveRolesAccess']))
+@UseGuards(AuthorizeGuard, PermissionGuard(['haveRolesAccess']))
 @ApiTags('roles')
 export class RolesAPIController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
-  // @UseGuards(PermissionGuard(['canAddRoles']))
+  @UseGuards(PermissionGuard(['canAddRoles']))
   async create(
     @Body()
     roleDto: CreateRoleDto,
   ) {
-    // await this.rolesService.create(roleDto)
+    await this.rolesService.create(roleDto)
     return 'New role successfully created!'
   }
 
@@ -49,7 +51,6 @@ export class RolesAPIController {
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
-<<<<<<< HEAD
     const findData: FindMany<Role> = {
       where: {},
       skip: (page - 1) * size,
@@ -64,26 +65,6 @@ export class RolesAPIController {
       ]
     }
     return await this.rolesService.find(findData)
-=======
-    // if (!id && !name) {
-    //   return await this.rolesService.find(
-    //     {},
-    //     { skip: (page - 1) * size, take: size },
-    //   )
-    // }
-    // return await this.rolesService.find(
-    //   [
-    //     {
-    //       name: name ? name.toUpperCase() : undefined,
-    //     },
-    //     { id },
-    //   ],
-    //   {
-    //     skip: (page - 1) * size,
-    //     take: size,
-    //   },
-    // )
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
   }
 
   @Patch()
@@ -93,7 +74,6 @@ export class RolesAPIController {
     @Body() changes: UpdateRoleDto,
     @ReqUser() user: User,
   ) {
-<<<<<<< HEAD
     if (!id || !changes) throw new BadRequestException("Can't update role!")
     const myRoles = await user.roles
     const updatingRole = await this.rolesService.findOne({ id })
@@ -102,31 +82,15 @@ export class RolesAPIController {
     }
     if (changes.name) changes.name = changes.name.toUpperCase()
     await this.rolesService.update(updatingRole.id, changes)
-=======
-    // if (!id || !changes) throw new BadRequestException("Can't update role!")
-    // const myRoles = await user.roles
-    // const updatingRole = await this.rolesService.findOne({ id })
-    // if (!myRoles.some((role) => role.priority < updatingRole.priority)) {
-    //   throw new ForbiddenException('You cannot modify this role')
-    // }
-    // if (changes.name) changes.name = changes.name.toUpperCase()
-    // await this.rolesService.update(updatingRole.id, changes)
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
     return `Updated role`
   }
 
   @Delete()
-  // @UseGuards(PermissionGuard(['canDeleteRoles']))
+  @UseGuards(PermissionGuard(['canDeleteRoles']))
   async delete(@Query('id') id: string) {
-<<<<<<< HEAD
     if (!id) throw new BadRequestException("Can't delete role!")
     const role = await this.rolesService.findOne({ id })
     await this.rolesService.delete(role)
-=======
-    // if (!id) throw new BadRequestException("Can't delete role!")
-    // const role = await this.rolesService.findOne({ id })
-    // await this.rolesService.delete([role])
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
     return `Deleted role`
   }
 }
