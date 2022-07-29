@@ -1,3 +1,4 @@
+import { FindMany } from './../shared/types/index'
 import {
   BadRequestException,
   Body,
@@ -24,6 +25,7 @@ import { ImageMimeTypes } from './../shared/utils/multer.helper'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
+import { Category } from './entities/categories.entity'
 
 @Controller('api/categories')
 @ApiTags('categories')
@@ -67,16 +69,15 @@ export class CategoriesAPIController {
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
-    if (!id && !name) {
-      return await this.categoriesService.find(
-        {},
-        { skip: (page - 1) * size, take: size },
-      )
-    }
-    return await this.categoriesService.find([{ id }, { name }], {
+    const findData: FindMany<Category> = {
+      where: {},
       skip: (page - 1) * size,
       take: size,
-    })
+    }
+    if (id || name) {
+      findData.where = [{ id }, { name }]
+    }
+    return await this.categoriesService.find(findData)
   }
 
   @Patch()
@@ -106,7 +107,7 @@ export class CategoriesAPIController {
       ...dto,
       img: img?.path,
     })
-    return 'Updated category'
+    return 'Category updated '
   }
 
   @Delete()
@@ -118,7 +119,7 @@ export class CategoriesAPIController {
       )
     const category = await this.categoriesService.findOne({ id })
     if (!category) throw new BadRequestException('No categories with this id')
-    await this.categoriesService.delete([category])
+    await this.categoriesService.delete(category)
     return 'Category deleted'
   }
 }

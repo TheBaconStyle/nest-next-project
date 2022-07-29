@@ -17,6 +17,7 @@ import { FacilitiesModule } from './facilities/facilities.module'
 import { Role } from './roles/entities/roles.entity'
 import { User } from './users/entities/users.entity'
 import { UsersModule } from './users/users.module'
+import * as yup from 'yup'
 
 @Module({
   imports: [
@@ -45,7 +46,22 @@ import { UsersModule } from './users/users.module'
       logging: false,
       synchronize: process.env.NODE_ENV === 'development',
     }),
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      async validate(config) {
+        const schema = yup.object().shape({
+          PORT: yup.number().required('server port is required'),
+          ROOT_PASSWORD: yup.string().required('root password is required'),
+          MAX_BOOKINGS_PER_USER: yup.number().default(5),
+        })
+        try {
+          return await schema.validate(config)
+        } catch (e) {
+          console.error(e)
+          process.exit(1)
+        }
+      },
+    }),
     AuthModule,
     BookingsModule,
     UsersModule,

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Role } from '../roles/entities/roles.entity'
-import { FindMany, FindOne } from './../shared/types'
+import { FindMany, FindOne, OneOrMany } from './../shared/types'
 import { RequiredFields } from './../shared/types/index'
 import { User } from './entities/users.entity'
 
@@ -29,31 +29,40 @@ export class UsersService {
     return await this.userRepo.save(user)
   }
 
-  async findOne(whereConditions: FindOne<User>) {
+  async findOne(findData: FindOne<User>) {
     const user = await this.userRepo.findOne({
-      where: whereConditions,
-      relations: ['roles'],
+      where: findData,
+      relations: { roles: true },
     })
     return user
   }
 
-  async find(whereConditions: FindMany<User>) {
+  async find(findData: FindMany<User>) {
     return await this.userRepo.find({
-      where: whereConditions,
+      ...findData,
       relations: ['roles'],
     })
   }
 
-  async findBlocked() {
-    return
+  async findBlocked(findData: FindMany<User>) {
+    return this.userRepo.find({ ...findData, withDeleted: true })
   }
 
-  async block(users: User[]) {
-    return await this.userRepo.softRemove(users)
+  async block(users: OneOrMany<User>) {
+    const variants: User[] = []
+    if (Array.isArray(users)) {
+      variants.push(...users)
+    } else {
+      variants.push(users)
+    }
+    return await this.userRepo.softRemove(variants)
   }
 
   async createRootUser(rootRole: Role) {
-    const variant = await this.userRepo.findOne({ login: 'root' })
+    const variant = await this.findOne({
+      roles: { id: rootRole.id },
+      login: 'root',
+    })
     if (variant) return variant
     const rootUser = new User({
       email: '',

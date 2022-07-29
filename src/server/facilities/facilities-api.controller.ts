@@ -18,12 +18,14 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { unlink } from 'fs/promises'
 import { PermissionGuard } from '../auth/guards/permission.guard'
+import { FindMany } from '../shared/types'
 import { configureMulter, ImageMimeTypes } from '../shared/utils/multer.helper'
 import { AuthorizeGuard } from './../auth/guards/authorize.guard'
 import { CategoriesService } from './../categories/categories.service'
 import { HttpErrorFilter } from './../shared/interceptors/error.filter'
 import { CreateFacilityDto } from './dto/create-facility.dto'
 import { UpdateFacilityDto } from './dto/update-facility.dto'
+import { Facility } from './entities/facilities.entity'
 import { FacilitiesService } from './facilities.service'
 
 @Controller('api/facilities')
@@ -82,24 +84,15 @@ export class FacilitiesAPIController {
     @Query('id') id?: string,
     @Query('category') category?: string,
   ) {
-    if (!id && !name && !category) {
-      return await this.facilitiesService.find(
-        {},
-        { skip: (page - 1) * size, take: size },
-      )
+    const findData: FindMany<Facility> = {
+      where: {},
+      skip: (page - 1) * size,
+      take: size,
     }
-    const findByCategory = { category: null }
-    if (category) {
-      const findCategory = await this.categoriesService.findOne({
-        id: category,
-      })
-      findByCategory.category = findCategory
+    if (id || name || category) {
+      findData.where = [{ id }, { name }, { category: { id: category } }]
     }
-    const result = await this.facilitiesService.find(
-      [{ id }, { name }, findByCategory],
-      { skip: (page - 1) * size, take: size },
-    )
-    return result
+    return await this.facilitiesService.find(findData)
   }
 
   @Patch()
@@ -148,7 +141,7 @@ export class FacilitiesAPIController {
       )
     const facility = await this.facilitiesService.findOne({ id })
     if (!facility) throw new BadRequestException('no facility with this id')
-    await this.facilitiesService.delete([facility])
+    await this.facilitiesService.delete(facility)
     return 'Facility deleted'
   }
 }

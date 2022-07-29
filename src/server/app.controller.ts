@@ -1,22 +1,18 @@
-import { NextFunction } from 'express'
-import { Controller, Get, Next, Post, Render, UseGuards } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { ApiExcludeController } from '@nestjs/swagger'
-import { AuthorizeGuard } from './auth/guards/authorize.guard'
-import { PermissionGuard } from './auth/guards/permission.guard'
+import { UsersService } from './users/users.service'
 
 @Controller()
 @ApiExcludeController()
 export class AppController {
-  @Get()
-  @Render('index')
-  async home() {
-    return {}
-  }
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  @Get('account')
-  @UseGuards(AuthorizeGuard)
-  @Render('account')
-  protectedRoute() {
-    return 'udhaiuhwdhadhwa'
+  @Get()
+  async home() {
+    return
   }
 }

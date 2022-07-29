@@ -1,3 +1,5 @@
+import { Role } from 'src/server/roles/entities/roles.entity'
+import { FindMany } from './../shared/types/index'
 import {
   BadRequestException,
   Body,
@@ -49,24 +51,20 @@ export class RolesAPIController {
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
-    if (!id && !name) {
-      return await this.rolesService.find(
-        {},
-        { skip: (page - 1) * size, take: size },
-      )
+    const findData: FindMany<Role> = {
+      where: {},
+      skip: (page - 1) * size,
+      take: size,
     }
-    return await this.rolesService.find(
-      [
+    if (id || name) {
+      findData.where = [
         {
           name: name ? name.toUpperCase() : undefined,
         },
         { id },
-      ],
-      {
-        skip: (page - 1) * size,
-        take: size,
-      },
-    )
+      ]
+    }
+    return await this.rolesService.find(findData)
   }
 
   @Patch()
@@ -83,7 +81,7 @@ export class RolesAPIController {
       throw new ForbiddenException('You cannot modify this role')
     }
     if (changes.name) changes.name = changes.name.toUpperCase()
-    await this.rolesService.update(updatingRole, changes)
+    await this.rolesService.update(updatingRole.id, changes)
     return `Updated role`
   }
 
@@ -92,7 +90,7 @@ export class RolesAPIController {
   async delete(@Query('id') id: string) {
     if (!id) throw new BadRequestException("Can't delete role!")
     const role = await this.rolesService.findOne({ id })
-    await this.rolesService.delete([role])
+    await this.rolesService.delete(role)
     return `Deleted role`
   }
 }

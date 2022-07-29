@@ -7,7 +7,7 @@ import { createPublicDestination } from '../shared/utils/multer.helper'
 import {
   FindMany,
   FindOne,
-  PageOptions,
+  OneOrMany,
   PartialFields,
   RequiredFields,
 } from './../shared/types/index'
@@ -26,7 +26,7 @@ export class FacilitiesService {
       'name' | 'img' | 'description' | 'category'
     >,
   ) {
-    const variant = await this.facilitiesRepo.findOne({
+    const variant = await this.findOne({
       name: createData.name,
     })
     if (variant) {
@@ -38,13 +38,12 @@ export class FacilitiesService {
   }
 
   async findOne(findData: FindOne<Facility>) {
-    return await this.facilitiesRepo.findOne(findData)
+    return await this.facilitiesRepo.findOne({ where: findData })
   }
 
-  async find(findData: FindMany<Facility>, pageOptions?: PageOptions) {
+  async find(findData: FindMany<Facility>) {
     const result = await this.facilitiesRepo.find({
-      where: findData,
-      ...pageOptions,
+      ...findData,
       order: { name: 'ASC' },
     })
     return result
@@ -67,7 +66,13 @@ export class FacilitiesService {
     return await this.facilitiesRepo.save(facility)
   }
 
-  async delete(categories: Facility[]) {
-    return await this.facilitiesRepo.softRemove(categories)
+  async delete(facilities: OneOrMany<Facility>) {
+    const variants: Facility[] = []
+    if (Array.isArray(facilities)) {
+      variants.push(...facilities)
+    } else {
+      variants.push(facilities)
+    }
+    return await this.facilitiesRepo.softRemove(variants)
   }
 }

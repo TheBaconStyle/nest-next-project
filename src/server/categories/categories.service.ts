@@ -7,7 +7,7 @@ import { createPublicDestination } from '../shared/utils/multer.helper'
 import {
   FindMany,
   FindOne,
-  PageOptions,
+  OneOrMany,
   PartialFields,
   RequiredFields,
 } from './../shared/types/index'
@@ -20,7 +20,7 @@ export class CategoriesService {
     private readonly categoriesRepo: Repository<Category>,
   ) {}
   async create(createData: RequiredFields<Category, 'name' | 'img'>) {
-    const variant = await this.categoriesRepo.findOne({ name: createData.name })
+    const variant = await this.findOne({ name: createData.name })
     if (variant) {
       await unlink(createData.img)
       throw new BadRequestException('Category with this name already exists')
@@ -31,13 +31,12 @@ export class CategoriesService {
   }
 
   async findOne(findData: FindOne<Category>) {
-    return await this.categoriesRepo.findOne(findData)
+    return await this.categoriesRepo.findOne({ where: findData })
   }
 
-  async find(findData: FindMany<Category>, pageOptions: PageOptions) {
+  async find(findData: FindMany<Category>) {
     return await this.categoriesRepo.find({
-      where: findData,
-      ...pageOptions,
+      ...findData,
       order: { name: 'ASC' },
     })
   }
@@ -56,7 +55,13 @@ export class CategoriesService {
     return await this.categoriesRepo.save(category)
   }
 
-  async delete(categories: Category[]) {
-    return await this.categoriesRepo.softRemove(categories)
+  async delete(categories: OneOrMany<Category>) {
+    const variants: Category[] = []
+    if (Array.isArray(categories)) {
+      variants.push(...categories)
+    } else {
+      variants.push(categories)
+    }
+    return await this.categoriesRepo.softRemove(variants)
   }
 }
