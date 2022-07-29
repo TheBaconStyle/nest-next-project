@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { RenderModule } from 'nest-next'
 import Next from 'next'
 import { join } from 'path'
+import * as yup from 'yup'
 import { AppController } from './app.controller'
 import { AuthModule } from './auth/auth.module'
 import { Session } from './auth/entities/sessions.entity'
@@ -15,9 +16,9 @@ import { Category } from './categories/entities/categories.entity'
 import { Facility } from './facilities/entities/facilities.entity'
 import { FacilitiesModule } from './facilities/facilities.module'
 import { Role } from './roles/entities/roles.entity'
+import { RolesModule } from './roles/roles.module'
 import { User } from './users/entities/users.entity'
 import { UsersModule } from './users/users.module'
-import * as yup from 'yup'
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import * as yup from 'yup'
       },
     }),
     AuthModule,
+    RolesModule,
     BookingsModule,
     UsersModule,
     FacilitiesModule,

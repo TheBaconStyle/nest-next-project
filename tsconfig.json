@@ -33,13 +33,9 @@
     "plugins": [
       {
         "name": "typescript-plugin-css-modules",
-<<<<<<< HEAD
-        "options": { "classnameTransform": "dashes" }
-=======
         "options": {
           "classnameTransform": "dashes"
         }
->>>>>>> aa434c06d5ecfc7016371eee813ff3d355f60f02
       }
     ]
   },
