@@ -1,14 +1,14 @@
 import { CategoriesModule } from './../categories/categories.module'
-import { FacilitiesService } from './facilities.service'
-import { FacilitiesAPIController } from './facilities-api.controller'
-import { Module } from '@nestjs/common'
+import { Facility } from './../entities/facilities.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Facility } from './entities/facilities.entity'
+import { Module } from '@nestjs/common'
+import { FacilitiesService } from './facilities.service'
+import { FacilitiesController } from './facilities.controller'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Facility]), CategoriesModule],
-  controllers: [FacilitiesAPIController],
   providers: [FacilitiesService],
+  controllers: [FacilitiesController],
   exports: [FacilitiesService],
 })
 export class FacilitiesModule {}

@@ -2,16 +2,16 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { unlink } from 'fs/promises'
 import { basename, join } from 'path'
-import { Repository } from 'typeorm'
-import { createPublicDestination } from '../shared/utils/multer.helper'
 import {
   FindMany,
   FindOne,
   OneOrMany,
   PartialFields,
   RequiredFields,
-} from './../shared/types/index'
-import { Category } from './entities/categories.entity'
+} from 'src/shared/types/database.type'
+import { createPublicDestination } from 'src/shared/utils/multer.helper'
+import { Repository } from 'typeorm'
+import { Category } from '../entities/categories.entity'
 
 @Injectable()
 export class CategoriesService {
@@ -19,6 +19,7 @@ export class CategoriesService {
     @InjectRepository(Category)
     private readonly categoriesRepo: Repository<Category>,
   ) {}
+
   async create(createData: RequiredFields<Category, 'name' | 'img'>) {
     const variant = await this.findOne({ name: createData.name })
     if (variant) {

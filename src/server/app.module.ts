@@ -1,75 +1,79 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { Global, Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RenderModule } from 'nest-next'
-import Next from 'next'
+import next from 'next'
 import { join } from 'path'
-import * as yup from 'yup'
+import { cwd } from 'process'
+import { envSchema } from 'src/shared/schema/env.schema'
 import { AppController } from './app.controller'
+import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
-import { Session } from './auth/entities/sessions.entity'
 import { BookingsModule } from './bookings/bookings.module'
-import { Booking } from './bookings/entities/bookings.entity'
 import { CategoriesModule } from './categories/categories.module'
-import { Category } from './categories/entities/categories.entity'
-import { Facility } from './facilities/entities/facilities.entity'
+import { Booking } from './entities/bookings.entity'
+import { Category } from './entities/categories.entity'
+import { Facility } from './entities/facilities.entity'
+import { Role } from './entities/roles.entity'
+import { Session } from './entities/sessions.entity'
+import { User } from './entities/users.entity'
 import { FacilitiesModule } from './facilities/facilities.module'
-import { Role } from './roles/entities/roles.entity'
 import { RolesModule } from './roles/roles.module'
-import { User } from './users/entities/users.entity'
 import { UsersModule } from './users/users.module'
 
+@Global()
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      serveRoot: '/public',
-    }),
     RenderModule.forRootAsync(
-      Next({
+      next({
         conf: {
+          cleanDistDir: true,
           useFileSystemPublicRoutes: false,
+          reactStrictMode: true,
         },
-        dev: process.env.NODE_ENV === 'development',
+        dev: process.env.NODE_ENV !== 'production',
         customServer: true,
       }),
-      {
-        viewsDir: null,
-        dev: process.env.NODE_ENV === 'development',
-        passthrough404: true,
-      },
+      { dev: process.env.NODE_ENV !== 'production' },
     ),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: join(__dirname, '..', 'database', 'data.db'),
-      entities: [User, Session, Role, Booking, Facility, Category],
-      logging: false,
-      synchronize: process.env.NODE_ENV === 'development',
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
-      async validate(config) {
-        const schema = yup.object().shape({
-          PORT: yup.number().required('server port is required'),
-          ROOT_PASSWORD: yup.string().required('root password is required'),
-          MAX_BOOKINGS_PER_USER: yup.number().default(5),
-        })
+      envFilePath: join(cwd(), '.env'),
+      validate(config) {
         try {
-          return await schema.validate(config)
+          return envSchema.validateSync(config)
         } catch (e) {
-          console.error(e)
+          console.log(e)
           process.exit(1)
         }
       },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/public',
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory(configService: ConfigService) {
+        return {
+          type: 'sqlite',
+          database: join(cwd(), 'database', 'data.db'),
+          entities: [Session, User, Role, Booking, Facility, Category],
+          logging: false,
+          synchronize: configService.get('NODE_ENV') !== 'production',
+        }
+      },
+    }),
     AuthModule,
+    UsersModule,
     RolesModule,
     BookingsModule,
-    UsersModule,
-    FacilitiesModule,
     CategoriesModule,
+    FacilitiesModule,
   ],
   controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

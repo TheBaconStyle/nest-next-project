@@ -1,65 +1,49 @@
-import { ValidationPipe } from '@nestjs/common'
+import { ProtectDocsMiddleware } from './middlewares/protect-docs.middleware'
+import { BasicFilter } from './filters/basic.filter'
+import { UsersService } from './users/users.service'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { green } from 'colors'
+import { AppModule } from './app.module'
+import { RolesService } from './roles/roles.service'
 import Fingerprint, {
   acceptHeaders,
   ip,
   useragent,
 } from '@shwao/express-fingerprint'
-import colors from 'colors'
-import { Request, Response } from 'express'
-import { RenderService } from 'nest-next'
-import { AppModule } from './app.module'
-import { RolesService } from './roles/roles.service'
-import { ProtectDocs } from './shared/middlewares/protect-docs.middleware'
-import { UsersService } from './users/users.service'
+import { ValidationPipe } from '@nestjs/common'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+  const config = app.get(ConfigService)
+  const rolesService = app.get(RolesService)
+  const usersService = app.get(UsersService)
+  app.useGlobalFilters(new BasicFilter())
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      disableErrorMessages: process.env.NODE_ENV !== 'development',
+      disableErrorMessages: config.get('NODE_ENV') === 'production',
     }),
   )
-  const docConfig = new DocumentBuilder()
+  app.use(Fingerprint({ parameters: [useragent, acceptHeaders, ip] }))
+  const docsConfig = new DocumentBuilder()
     .setTitle('OSL')
     .setDescription('OSL API docs')
-    .setVersion('1.0')
+    .setVersion('0.1')
     .build()
-  const document = SwaggerModule.createDocument(app, docConfig)
-  app.use(Fingerprint({ parameters: [useragent, acceptHeaders, ip] }))
-  if (process.env.NODE_ENV !== 'development') app.use('/api/docs', ProtectDocs)
-  SwaggerModule.setup('api/docs', app, document)
-  const config = app.get(ConfigService)
-  const renderer = app.get(RenderService)
-  renderer.setErrorHandler(
-    async (
-      err: { response: { message: string } },
-      req: Request,
-      res: Response,
-    ) => {
-      if (req.path.includes('api')) {
-        if (process.env.NODE_ENV === 'development') console.log(err)
-        if (err.response.message) {
-          return res.send({ message: err.response.message })
-        }
-        return res.send(err)
-      }
-      return res.render('404')
-    },
-  )
-  const rolesService = app.get(RolesService)
-  await rolesService.createBasicRole()
+  const document = SwaggerModule.createDocument(app, docsConfig)
+  if (config.get('NODE_ENV') === 'production') {
+    app.use('/api/docs', ProtectDocsMiddleware)
+  }
+  SwaggerModule.setup('/api/docs', app, document)
   const rootRole = await rolesService.createRootRole()
-  const usersService = app.get(UsersService)
-  usersService.createRootUser(rootRole)
+  await usersService.createRootUser(rootRole)
+  await rolesService.createBasicRole()
   const PORT = config.get('PORT')
-  await app.listen(PORT, () => {
-    console.log(colors.green(`Server started at http://localhost:${PORT}`))
-  })
+  await app.listen(PORT)
+  console.log(green(`Server started on port http://localhost:${PORT}`))
 }
 
 bootstrap()

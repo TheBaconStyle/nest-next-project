@@ -1,4 +1,5 @@
 import { AppProps } from 'next/app'
+import React from 'react'
 
 import '../client/styles/global.scss'
 

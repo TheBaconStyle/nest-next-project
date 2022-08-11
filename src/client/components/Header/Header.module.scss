@@ -1,6 +1,37 @@
-.qwe {
-  /* @apply bg-red-400; */
-  &_ewq {
-    @apply bg-blue-400;
+.navbar {
+  @apply sticky top-0 shadow-md z-50 bg-slate-50;
+  .nav {
+    @apply p-2 container mx-auto flex justify-between flex-wrap;
+  }
+  &_brand {
+    @apply text-4xl my-auto;
+  }
+  &_collapse {
+    @apply mt-2 lg:mt-0 w-full lg:w-fit ml-auto mr-4 my-auto overflow-hidden;
+    &_toggler {
+      @apply rounded border-2 border-slate-200 px-1;
+      &_icon {
+        @apply h-9 w-9;
+      }
+    }
+    &_item {
+      @apply transition rounded hover:bg-slate-200 active:bg-slate-300 p-2;
+      &.active {
+        @apply font-medium bg-slate-100;
+      }
+      &_wrapper {
+        @apply flex flex-col lg:flex-row lg:gap-2 justify-end;
+      }
+    }
+  }
+}
+
+.search_form {
+  @apply flex rounded border-2 border-slate-200;
+  &_entry {
+    @apply pl-2 outline-none;
+  }
+  &_button {
+    @apply px-3;
   }
 }

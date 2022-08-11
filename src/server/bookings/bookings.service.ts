@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import dayjs from 'dayjs'
-import { Between, Repository } from 'typeorm'
 import {
   FindMany,
   FindOne,
   OneOrMany,
   RequiredFields,
-} from './../shared/types/index'
-import { Booking } from './entities/bookings.entity'
+} from 'src/shared/types/database.type'
+import { Between, Repository } from 'typeorm'
+import { Booking } from '../entities/bookings.entity'
+import dayjs from 'dayjs'
 
 @Injectable()
 export class BookingsService {

@@ -1,17 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { unlink } from 'fs/promises'
-import { basename, join } from 'path'
-import { Repository } from 'typeorm'
-import { createPublicDestination } from '../shared/utils/multer.helper'
+import { createPublicDestination } from 'src/shared/utils/multer.helper'
 import {
   FindMany,
   FindOne,
   OneOrMany,
   PartialFields,
   RequiredFields,
-} from './../shared/types/index'
-import { Facility } from './entities/facilities.entity'
+} from './../../shared/types/database.type'
+import { Facility } from './../entities/facilities.entity'
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { basename, join } from 'path'
+import { unlink } from 'fs/promises'
 
 @Injectable()
 export class FacilitiesService {

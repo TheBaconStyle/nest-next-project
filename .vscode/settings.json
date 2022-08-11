@@ -7,11 +7,10 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/node_modules": true,
-    "**/.vscode": false,
-    "**/dist": false,
-    "**/.next": false,
-    "**/.yarn": true
+    "**/.yarn": true,
+    "**/.next": true,
+    "**/dist": true
   },
   "files.eol": "\n",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

@@ -1,16 +1,20 @@
-import { UsersService } from './users/users.service'
-import { Controller, Get } from '@nestjs/common'
+import { AuthorizeGuard } from './guards/authorize.guard'
+import { Controller, Get, Render, UseGuards } from '@nestjs/common'
 import { ApiExcludeController } from '@nestjs/swagger'
-import { RolesService } from './roles/roles.service'
 
-@Controller()
 @ApiExcludeController()
+@Controller()
 export class AppController {
-  constructor(
-    private readonly rolesService: RolesService,
-    private readonly usersService: UsersService,
-  ) {}
-
+  @Render('Index')
   @Get()
-  async home() {}
+  getHello() {}
+
+  @Render('Profile')
+  @UseGuards(AuthorizeGuard)
+  @Get('profile')
+  async qwe() {}
+
+  @Render('facilities/facilities')
+  @Get('new')
+  async ewq() {}
 }

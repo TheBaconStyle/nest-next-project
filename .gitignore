@@ -1,10 +1,9 @@
 # compiled output
 /dist
-/node_modules
-/.yarn
 /.next
-/public/**
-/database/**
+/.yarn
+/database
+/node_modules
 
 # Logs
 logs
@@ -21,9 +20,6 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
-
-#Env files
-/local.env
 
 # IDEs and editors
 /.idea

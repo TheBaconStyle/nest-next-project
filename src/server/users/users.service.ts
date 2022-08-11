@@ -1,11 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Role } from '../roles/entities/roles.entity'
-import { FindMany, FindOne, OneOrMany } from './../shared/types'
-import { RequiredFields } from './../shared/types/index'
-import { User } from './entities/users.entity'
+import { ConfigService } from '@nestjs/config'
+import { User } from '../entities/users.entity'
+import {
+  FindMany,
+  FindOne,
+  OneOrMany,
+  RequiredFields,
+} from 'src/shared/types/database.type'
+import { BadRequestException } from '@nestjs/common'
+import { Role } from '../entities/roles.entity'
 
 @Injectable()
 export class UsersService {

@@ -1,14 +1,14 @@
-import { FacilitiesModule } from './../facilities/facilities.module'
-import { BookingsAPIController } from './controllers/bookings-api.controller'
-import { Booking } from './entities/bookings.entity'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { BookingsService } from './bookings.service'
 import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Booking } from '../entities/bookings.entity'
+import { FacilitiesModule } from '../facilities/facilities.module'
+import { BookingsController } from './bookings.controller'
+import { BookingsService } from './bookings.service'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Booking]), FacilitiesModule],
+  controllers: [BookingsController],
   providers: [BookingsService],
-  controllers: [BookingsAPIController],
   exports: [BookingsService],
 })
 export class BookingsModule {}
