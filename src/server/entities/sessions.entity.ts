@@ -1,18 +1,18 @@
-import { User } from './users.entity'
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
+import { ISession } from 'connect-typeorm/out'
+import { Column, DeleteDateColumn, Entity, Index, PrimaryColumn } from 'typeorm'
 
 @Entity('sessions')
-export class Session {
-  constructor(dto?: Partial<Session>) {
-    Object.assign(this, dto)
-  }
+export class Session implements ISession {
+  @Index()
+  @Column('bigint')
+  public expiredAt = Date.now()
 
-  @PrimaryColumn({ nullable: false })
-  hash: string
+  @PrimaryColumn('varchar', { length: 255 })
+  public id = ''
 
-  @Column({ nullable: false })
-  name: string
+  @Column('text')
+  public json = ''
 
-  @ManyToOne(() => User, (user) => user.sessions, { nullable: false })
-  user: Promise<User>
+  @DeleteDateColumn()
+  public destroyedAt?: Date
 }

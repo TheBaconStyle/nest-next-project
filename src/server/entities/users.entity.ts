@@ -10,7 +10,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Session } from './sessions.entity'
 import { Role } from './roles.entity'
 import { Booking } from './bookings.entity'
 
@@ -38,9 +37,6 @@ export class User {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Promise<Role[]>
-
-  @OneToMany(() => Session, (session) => session.user)
-  sessions: Promise<Session[]>
 
   @OneToMany(() => Booking, (booking) => booking.user)
   bookings: Promise<Booking[]>

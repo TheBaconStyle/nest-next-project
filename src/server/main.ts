@@ -1,24 +1,59 @@
-import { ProtectDocsMiddleware } from './middlewares/protect-docs.middleware'
-import { BasicFilter } from './filters/basic.filter'
-import { UsersService } from './users/users.service'
+import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-import { green } from 'colors'
-import { AppModule } from './app.module'
-import { RolesService } from './roles/roles.service'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import Fingerprint, {
   acceptHeaders,
   ip,
   useragent,
 } from '@shwao/express-fingerprint'
-import { ValidationPipe } from '@nestjs/common'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { green } from 'colors'
+import { TypeormStore } from 'connect-typeorm'
+import session from 'express-session'
+import ms from 'ms'
+import passport from 'passport'
+import { join } from 'path'
+import { cwd } from 'process'
+import { envSchema } from 'src/shared/schema/env.schema'
+import { DataSource } from 'typeorm'
+import * as yup from 'yup'
+import { AppModule } from './app.module'
+import { Session } from './entities/sessions.entity'
+import { BasicFilter } from './filters/basic.filter'
+import { ProtectDocsMiddleware } from './middlewares/protect-docs.middleware'
+import { RolesService } from './roles/roles.service'
+import { UsersService } from './users/users.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  const config = app.get(ConfigService)
+  const config =
+    app.get<ConfigService<yup.InferType<typeof envSchema>>>(ConfigService)
   const rolesService = app.get(RolesService)
   const usersService = app.get(UsersService)
+  const db = await new DataSource({
+    type: 'sqlite',
+    database: join(cwd(), 'database', 'data.db'),
+    synchronize: true,
+    entities: [Session],
+  }).initialize()
+  const repo = db.getRepository(Session)
+  app.use(
+    session({
+      secret: config.get('SESSION_SECRET'),
+      name: 'OSL_SESS_ID',
+      resave: false,
+      saveUninitialized: false,
+      store: new TypeormStore().connect(repo),
+      cookie: {
+        maxAge: ms('30 days'),
+        signed: true,
+        httpOnly: true,
+        sameSite: true,
+      },
+    }),
+  )
+  app.use(passport.initialize())
+  app.use(passport.session())
   app.useGlobalFilters(new BasicFilter())
   app.useGlobalPipes(
     new ValidationPipe({

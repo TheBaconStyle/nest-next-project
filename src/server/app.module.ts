@@ -1,3 +1,5 @@
+import { TypeormStore } from 'connect-typeorm'
+import { SessionModule } from 'nestjs-session'
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
@@ -21,6 +23,9 @@ import { User } from './entities/users.entity'
 import { FacilitiesModule } from './facilities/facilities.module'
 import { RolesModule } from './roles/roles.module'
 import { UsersModule } from './users/users.module'
+import * as yup from 'yup'
+import { DataSource } from 'typeorm'
+import ms from 'ms'
 
 @Global()
 @Module({

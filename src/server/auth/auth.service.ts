@@ -23,38 +23,38 @@ export class AuthService {
     private readonly rolesService: RolesService,
   ) {}
 
-  async createSession(
-    sessionDto: RequiredFields<Session, 'hash' | 'name' | 'user'>,
-  ) {
-    const session = new Session(sessionDto)
-    return await this.sessionRepo.save(session)
-  }
+  // async createSession(
+  //   sessionDto: RequiredFields<Session, 'hash' | 'name' | 'user'>,
+  // ) {
+  //   const session = new Session(sessionDto)
+  //   return await this.sessionRepo.save(session)
+  // }
 
-  async findSession(findData: FindOne<Session>) {
-    return await this.sessionRepo.findOne({
-      where: findData,
-      relations: { user: { roles: true } },
-    })
-  }
-  async findSessions(findData: FindMany<Session>) {
-    return await this.sessionRepo.find({
-      ...findData,
-    })
-  }
+  // async findSession(findData: FindOne<Session>) {
+  //   return await this.sessionRepo.findOne({
+  //     where: findData,
+  //     relations: { user: { roles: true } },
+  //   })
+  // }
+  // async findSessions(findData: FindMany<Session>) {
+  //   return await this.sessionRepo.find({
+  //     ...findData,
+  //   })
+  // }
 
-  async updateSessions(hash: string, opts: Partial<Session>) {
-    return await this.sessionRepo.update({ hash }, opts)
-  }
+  // async updateSessions(hash: string, opts: Partial<Session>) {
+  //   return await this.sessionRepo.update({ hash }, opts)
+  // }
 
-  async deleteSessions(sessions: OneOrMany<Session>) {
-    const variants: Session[] = []
-    if (Array.isArray(sessions)) {
-      variants.push(...sessions)
-    } else {
-      variants.push(sessions)
-    }
-    return await this.sessionRepo.remove(variants)
-  }
+  // async deleteSessions(sessions: OneOrMany<Session>) {
+  //   const variants: Session[] = []
+  //   if (Array.isArray(sessions)) {
+  //     variants.push(...sessions)
+  //   } else {
+  //     variants.push(sessions)
+  //   }
+  //   return await this.sessionRepo.remove(variants)
+  // }
 
   async registerUser(
     userData: RequiredFields<User, 'email' | 'login' | 'password'>,
@@ -67,19 +67,19 @@ export class AuthService {
   }
 
   async authenticateUser(
-    { login, password }: RequiredFields<User, 'login' | 'password'>,
-    fingerprint: FingerprintData,
+    { login, password }: RequiredFields<User, 'login' | 'password'>, // fingerprint: FingerprintData,
   ) {
-    const candidate = this.usersService.findOne({ login })
-    if (!(await candidate))
+    const candidate = await this.usersService.findOne({ login })
+    if (!candidate)
       throw new UnauthorizedException('User with this login does not exist.')
-    if (await (await candidate).validatePassword(password)) {
-      const useragent = fingerprint.components.useragent
-      return await this.createSession({
-        user: candidate,
-        hash: fingerprint.hash,
-        name: `${useragent.browser.family}, ${useragent.os.family}`,
-      })
+    if (await candidate.validatePassword(password)) {
+      // const useragent = fingerprint.components.useragent
+      // return await this.createSession({
+      //   user: candidate,
+      //   hash: fingerprint.hash,
+      //   name: `${useragent.browser.family}, ${useragent.os.family}`,
+      // })
+      return candidate
     }
     throw new UnauthorizedException(
       'Oops! Login & password combination is not valid!',
@@ -87,15 +87,15 @@ export class AuthService {
   }
 
   async authorizeUser(hash: string) {
-    const session = await this.findSession({ hash })
-    if (!session) {
-      throw new UnauthorizedException()
-    }
-    return session.user
+    // const session = await this.findSession({ hash })
+    // if (!session) {
+    //   throw new UnauthorizedException()
+    // }
+    // return session.user
   }
 
   async deauthenticateUser(hash: string) {
-    const session = await this.findSession({ hash })
-    return await this.deleteSessions(session)
+    // const session = await this.findSession({ hash })
+    // return await this.deleteSessions(session)
   }
 }

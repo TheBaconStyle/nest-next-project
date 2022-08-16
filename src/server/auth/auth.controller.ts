@@ -1,7 +1,3 @@
-import { ConfigService } from '@nestjs/config'
-import { AuthPageProps } from '../../shared/types/auth.types'
-import { FingerprintRequest } from './../../shared/types/request.type'
-import { AuthService } from './auth.service'
 import {
   Body,
   Controller,
@@ -10,21 +6,22 @@ import {
   Post,
   Render,
   Req,
+  Session,
   UseGuards,
 } from '@nestjs/common'
-import { RegisterDto } from '../dto/register-user.dto'
-import { SignInDto } from '../dto/signin-user.dto'
-import { AuthorizeGuard } from '../guards/authorize.guard'
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger'
-import { UnauthenticatedGuard } from '../guards/unauthenticated.guard'
+import { AuthPageProps } from '../../shared/types/auth.types'
+import { RegisterDto } from '../dto/register-user.dto'
+import { AuthenticateGuard } from '../guards/authenticate.guard'
+import { AuthorizeGuard } from '../guards/authorize.guard'
+import { FingerprintRequest } from './../../shared/types/request.type'
+import { UnauthorizedGuard } from './../guards/unauthorized.guard'
+import { AuthService } from './auth.service'
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
   async rigisterUser(@Body() userDto: RegisterDto) {
@@ -32,32 +29,28 @@ export class AuthController {
     return 'Registered successfully'
   }
 
-  @Post('signin')
-  async authenticateUser(
-    @Req() req: FingerprintRequest,
-    @Body() userDto: SignInDto,
-  ) {
-    await this.authService.authenticateUser(userDto, req.fingerprint)
+  @UseGuards(AuthenticateGuard)
+  @Post('api/signin')
+  async authenticateUser() {
     return 'Signed in'
   }
 
-  @Delete('signout')
   @UseGuards(AuthorizeGuard)
-  async signout(@Req() req: FingerprintRequest) {
-    await this.authService.deauthenticateUser(req.fingerprint.hash)
+  @Delete('api/signout')
+  async signout(@Session() session) {
+    session.destroy()
     return 'Signed out'
   }
 
   @UseGuards(AuthorizeGuard)
   @Get('/')
   async qwe(@Req() req: FingerprintRequest) {
-    const userAgent = req.fingerprint.components.useragent
-    return `U send request from ${userAgent.browser.family} on ${userAgent.os.family} ${req.fingerprint.hash}`
+    return 'OK'
   }
 
   @ApiExcludeEndpoint()
   @Render('Auth')
-  @UseGuards(UnauthenticatedGuard)
+  @UseGuards(UnauthorizedGuard)
   @Get('signin')
   async signInPage(): Promise<AuthPageProps> {
     return {
@@ -67,7 +60,7 @@ export class AuthController {
 
   @ApiExcludeEndpoint()
   @Render('Auth')
-  @UseGuards(UnauthenticatedGuard)
+  @UseGuards(UnauthorizedGuard)
   @Get('signup')
   async signUpPage(): Promise<AuthPageProps> {
     return {
