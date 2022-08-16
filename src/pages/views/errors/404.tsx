@@ -1,3 +1,5 @@
+import { Layout } from 'src/client/components/Layout/Layout'
+
 export default function Err404() {
-  return <>Page not found</>
+  return <Layout>Page not found</Layout>
 }

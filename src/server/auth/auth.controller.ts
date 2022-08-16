@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config'
 import { AuthPageProps } from '../../shared/types/auth.types'
 import { FingerprintRequest } from './../../shared/types/request.type'
 import { AuthService } from './auth.service'
@@ -14,12 +15,16 @@ import {
 import { RegisterDto } from '../dto/register-user.dto'
 import { SignInDto } from '../dto/signin-user.dto'
 import { AuthorizeGuard } from '../guards/authorize.guard'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger'
 import { UnauthenticatedGuard } from '../guards/unauthenticated.guard'
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('signup')
   async rigisterUser(@Body() userDto: RegisterDto) {
@@ -50,6 +55,7 @@ export class AuthController {
     return `U send request from ${userAgent.browser.family} on ${userAgent.os.family} ${req.fingerprint.hash}`
   }
 
+  @ApiExcludeEndpoint()
   @Render('Auth')
   @UseGuards(UnauthenticatedGuard)
   @Get('signin')
@@ -59,6 +65,7 @@ export class AuthController {
     }
   }
 
+  @ApiExcludeEndpoint()
   @Render('Auth')
   @UseGuards(UnauthenticatedGuard)
   @Get('signup')

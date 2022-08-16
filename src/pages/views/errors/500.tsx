@@ -1,3 +1,5 @@
+import { Layout } from 'src/client/components/Layout/Layout'
+
 export default function Err500() {
-  return <>Internal server error</>
+  return <Layout>Internal server error</Layout>
 }

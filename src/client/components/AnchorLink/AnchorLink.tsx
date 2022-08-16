@@ -1,8 +1,9 @@
 import classNames from 'classnames'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import { useIsClient } from 'usehooks-ts'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 interface AnchorLinkProps {
   className?: string
@@ -13,18 +14,21 @@ interface AnchorLinkProps {
 
 export function AnchorLink(props: AnchorLinkProps) {
   const router = useRouter()
-  const isSameRoot = router.asPath === props.href
-  const isActive = router.asPath.includes(props.href)
+  const isSameRoot = props.href === router.asPath
+  const isActive =
+    props.href === router.asPath || `${props.href}#` === router.asPath
   const isClient = useIsClient()
   return (
-    <a
-      href={!isSameRoot && isClient ? props.href : '#'}
-      className={classNames(props.className, {
-        [props.activeClass ?? 'active']: isActive && isClient,
-      })}
-      draggable={false}
-    >
-      {props.children}
-    </a>
+    <Link href={!isSameRoot ? props.href : '#'} passHref>
+      <motion.a
+        className={classNames(props.className, {
+          [props.activeClass ?? 'active']: isActive && isClient,
+        })}
+        draggable={false}
+        whileTap={{ scale: 0.98 }}
+      >
+        {props.children}
+      </motion.a>
+    </Link>
   )
 }

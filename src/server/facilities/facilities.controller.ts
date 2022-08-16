@@ -19,13 +19,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiConsumes, ApiQuery } from '@nestjs/swagger'
+import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { unlink } from 'fs/promises'
 import { CategoriesService } from '../categories/categories.service'
 import { CreateFacilityDto } from '../dto/create-facility.dto'
 import { FacilitiesService } from './facilities.service'
 import { PermissionGuard } from '../guards/permission.guard'
 
+@ApiTags('facilities')
 @Controller('facilities')
 export class FacilitiesController {
   constructor(

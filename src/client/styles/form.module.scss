@@ -1,0 +1,17 @@
+.form {
+  @apply flex flex-col h-full my-auto mx-auto p-2;
+  &_group {
+    &_input {
+      @apply border-2 p-2 outline-none mb-2 text-lg rounded-md;
+    }
+  }
+  &_submit {
+    @apply p-3 bg-slate-400 text-slate-50 rounded-md text-lg flex items-center gap-1 hover:bg-slate-500 transition;
+    &_icon {
+      @apply inline-block w-7 h-7;
+    }
+  }
+  &_title {
+    @apply text-2xl mb-2 pl-2;
+  }
+}

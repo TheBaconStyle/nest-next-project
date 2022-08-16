@@ -7,16 +7,18 @@ import { Progress } from '../Progress/Progress'
 import styles from './Header.module.scss'
 
 export function Header() {
-  const { toggle, setFalse, value: isMenuVisible } = useBoolean(true)
+  const {
+    toggle: toggleMenu,
+    setFalse: hideMenu,
+    value: isMenuVisible,
+  } = useBoolean(false)
   const isDesktop = useMediaQuery('(min-width: 1024px)')
   const isClient = useIsClient()
   useEffect(() => {
-    if (!isDesktop) {
-      setFalse()
-    }
-  }, [isDesktop, setFalse])
+    hideMenu()
+  }, [isDesktop, hideMenu])
   const handleMenuButtonClick = () => {
-    toggle()
+    toggleMenu()
   }
   return (
     <header className={styles.navbar}>
@@ -26,14 +28,16 @@ export function Header() {
           Brand
         </AnchorLink>
         {isClient && !isDesktop && (
-          <button
+          <motion.button
             className={styles.navbar_collapse_toggler}
             onClick={handleMenuButtonClick}
+            whileTap={{ scale: 0.95 }}
           >
             <AiOutlineMenu className={styles.navbar_collapse_toggler_icon} />
-          </button>
+          </motion.button>
         )}
         <motion.div
+          initial={{ height: isDesktop || isMenuVisible ? '100%' : '0' }}
           className={styles.navbar_collapse}
           animate={{ height: isDesktop || isMenuVisible ? '100%' : '0' }}
         >
