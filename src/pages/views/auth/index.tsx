@@ -1,6 +1,6 @@
-import { Layout } from 'src/client/components/Layout/Layout'
-import { SignUpForm } from 'src/client/components/SignUpForm/SignUpForm'
-import { SignInForm } from 'src/client/components/SignInForm/SignInForm'
+import { Layout } from 'src/client/components/Layout'
+import { SignUpForm } from 'src/client/components/SignUpForm'
+import { SignInForm } from 'src/client/components/SignInForm'
 import { AuthPageProps } from 'src/shared/types/auth.types'
 import { gssp } from 'src/shared/utils/gssp.util'
 

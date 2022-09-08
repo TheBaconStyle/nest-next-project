@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 * {
-  @apply scroll-smooth;
+  @apply scroll-smooth font-sans font-normal;
 }
 #__next {
   /* height: 5000px; */

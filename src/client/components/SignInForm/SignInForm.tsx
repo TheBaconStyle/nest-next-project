@@ -1,12 +1,12 @@
-import * as yup from 'yup'
-import { SignInSchema } from 'src/shared/schema/signin.schema'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm } from 'react-hook-form'
-import { ApiClient } from 'src/shared/utils/api-client.util'
-import styles from '../../styles/form.module.scss'
-import { AiOutlineUserAdd } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { AiOutlineUserAdd } from 'react-icons/ai'
+import { SignInSchema } from 'src/shared/schema/signin.schema'
+import { ApiClient } from 'src/shared/utils/api-client.util'
+import * as yup from 'yup'
+import styles from '../../styles/AuthForm.module.scss'
 
 type SignInFields = yup.InferType<typeof SignInSchema>
 
@@ -14,8 +14,6 @@ export function SignInForm() {
   const {
     register,
     handleSubmit,
-    setError,
-    setFocus,
     formState: { errors },
   } = useForm<SignInFields>({
     mode: 'onBlur',
@@ -30,9 +28,7 @@ export function SignInForm() {
   const submitHandler = useCallback(
     async (data: SignInFields) => {
       try {
-        await ApiClient.get('/auth/', {
-          headers: { 'User-Agent': userAgent },
-        })
+        await ApiClient.post('/auth/api/signin', data)
         router.push('/')
       } catch (e) {
         console.log(e)

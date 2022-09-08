@@ -1,5 +1,9 @@
-import { Layout } from 'src/client/components/Layout/Layout'
+import { GetServerSideProps } from 'next'
+
+export const getServerSideProps: GetServerSideProps = async (_context) => {
+  return { props: {}, redirect: { destination: '/auth/signin' } }
+}
 
 export default function Err401() {
-  return <Layout>Unauthorized</Layout>
+  return <>Unauthorized</>
 }

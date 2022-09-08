@@ -1,5 +1,5 @@
 import { CategoriesModule } from './../categories/categories.module'
-import { Facility } from './../entities/facilities.entity'
+import { Facility } from '../entities/facilities.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Module } from '@nestjs/common'
 import { FacilitiesService } from './facilities.service'

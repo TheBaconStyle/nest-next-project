@@ -4,6 +4,8 @@
 /.yarn
 /database
 /node_modules
+/migrations
+/public
 
 # Logs
 logs

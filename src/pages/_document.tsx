@@ -3,8 +3,10 @@ import React from 'react'
 
 export default function Document() {
   return (
-    <Html>
-      <Head></Head>
+    <Html lang="ru">
+      <Head>
+        <link rel="icon" href="/public/assets/favicon.ico" />
+      </Head>
       <body>
         <Main />
         <NextScript />

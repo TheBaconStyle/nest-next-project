@@ -1,12 +1,21 @@
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
-import { AiOutlineMenu, AiOutlineSearch } from 'react-icons/ai'
+import React, { useEffect } from 'react'
+import {
+  FiMenu,
+  FiUser,
+  FiUserCheck,
+  FiUserPlus,
+  FiUserX,
+} from 'react-icons/fi'
+import { BasePageProps } from 'src/shared/types/page.type'
 import { useBoolean, useIsClient, useMediaQuery } from 'usehooks-ts'
-import { AnchorLink } from '../AnchorLink/AnchorLink'
-import { Progress } from '../Progress/Progress'
+import { AnchorLink } from '../AnchorLink'
+import { Progress } from '../Progress'
 import styles from './Header.module.scss'
 
-export function Header() {
+export interface HeaderProps extends BasePageProps {}
+
+export function Header({ user }: HeaderProps) {
   const {
     toggle: toggleMenu,
     setFalse: hideMenu,
@@ -33,7 +42,7 @@ export function Header() {
             onClick={handleMenuButtonClick}
             whileTap={{ scale: 0.95 }}
           >
-            <AiOutlineMenu className={styles.navbar_collapse_toggler_icon} />
+            <FiMenu className={styles.navbar_collapse_toggler_icon} />
           </motion.button>
         )}
         <motion.div
@@ -42,48 +51,48 @@ export function Header() {
           animate={{ height: isDesktop || isMenuVisible ? '100%' : '0' }}
         >
           <div className={styles.navbar_collapse_item_wrapper}>
-            <AnchorLink
-              className={styles.navbar_collapse_item}
-              activeClass={styles.active}
-              href="/profile"
-            >
-              profile
-            </AnchorLink>
-            <AnchorLink
-              className={styles.navbar_collapse_item}
-              activeClass={styles.active}
-              href="/auth/signin"
-            >
-              signin
-            </AnchorLink>
-            <AnchorLink
-              className={styles.navbar_collapse_item}
-              activeClass={styles.active}
-              href="/auth/signup"
-            >
-              signup
-            </AnchorLink>
-            <AnchorLink
-              href="/new"
-              className={styles.navbar_collapse_item}
-              activeClass={styles.active}
-            >
-              new route
-            </AnchorLink>
+            {!user && (
+              <>
+                <AnchorLink
+                  className={styles.navbar_collapse_item}
+                  activeClass={styles.active}
+                  href="/auth/signin"
+                >
+                  <FiUserCheck className={styles.navbar_collapse_item_icon} />{' '}
+                  signin
+                </AnchorLink>
+                <AnchorLink
+                  className={styles.navbar_collapse_item}
+                  activeClass={styles.active}
+                  href="/auth/signup"
+                >
+                  <FiUserPlus className={styles.navbar_collapse_item_icon} />
+                  signup
+                </AnchorLink>
+              </>
+            )}
+            {user && (
+              <>
+                <AnchorLink
+                  className={styles.navbar_collapse_item}
+                  activeClass={styles.active}
+                  href="/user/profile"
+                >
+                  <FiUser className={styles.navbar_collapse_item_icon} />
+                  {user}
+                </AnchorLink>
+                <AnchorLink
+                  className={styles.navbar_collapse_item}
+                  activeClass={styles.active}
+                  href="/auth/api/signout"
+                >
+                  <FiUserX className={styles.navbar_collapse_item_icon} />
+                  signout
+                </AnchorLink>
+              </>
+            )}
           </div>
         </motion.div>
-        {isClient && isDesktop && (
-          <form action="" className={styles.search_form}>
-            <input type="text" className={styles.search_form_entry} />
-            <button
-              className={styles.search_form_button}
-              type="submit"
-              title="Поиск"
-            >
-              <AiOutlineSearch />
-            </button>
-          </form>
-        )}
       </nav>
     </header>
   )

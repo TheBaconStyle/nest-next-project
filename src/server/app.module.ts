@@ -1,5 +1,3 @@
-import { TypeormStore } from 'connect-typeorm'
-import { SessionModule } from 'nestjs-session'
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
@@ -12,20 +10,17 @@ import { envSchema } from 'src/shared/schema/env.schema'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
-import { BookingsModule } from './bookings/bookings.module'
-import { CategoriesModule } from './categories/categories.module'
-import { Booking } from './entities/bookings.entity'
-import { Category } from './entities/categories.entity'
-import { Facility } from './entities/facilities.entity'
-import { Role } from './entities/roles.entity'
 import { Session } from './entities/sessions.entity'
-import { User } from './entities/users.entity'
+import { Booking } from './entities/bookings.entity'
+import { BookingsModule } from './bookings/bookings.module'
+import { Category } from './entities/categories.entity'
+import { CategoriesModule } from './categories/categories.module'
+import { Facility } from './entities/facilities.entity'
 import { FacilitiesModule } from './facilities/facilities.module'
+import { Role } from './entities/roles.entity'
 import { RolesModule } from './roles/roles.module'
+import { User } from './entities/users.entity'
 import { UsersModule } from './users/users.module'
-import * as yup from 'yup'
-import { DataSource } from 'typeorm'
-import ms from 'ms'
 
 @Global()
 @Module({
@@ -55,7 +50,7 @@ import ms from 'ms'
       },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(cwd(), 'public'),
       serveRoot: '/public',
     }),
     TypeOrmModule.forRootAsync({

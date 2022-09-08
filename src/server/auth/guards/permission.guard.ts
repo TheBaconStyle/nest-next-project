@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, mixin } from '@nestjs/common'
-import { User } from '../entities/users.entity'
+import { User } from '../../entities/users.entity'
 import { UserRequest } from 'src/shared/types/request.type'
 import { RolePermissions } from 'src/shared/types/roles.types'
 

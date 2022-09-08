@@ -19,7 +19,7 @@ export function AnchorLink(props: AnchorLinkProps) {
     props.href === router.asPath || `${props.href}#` === router.asPath
   const isClient = useIsClient()
   return (
-    <Link href={!isSameRoot ? props.href : '#'} passHref>
+    <Link href={!isSameRoot ? props.href : '#'} passHref soft replace>
       <motion.a
         className={classNames(props.className, {
           [props.activeClass ?? 'active']: isActive && isClient,

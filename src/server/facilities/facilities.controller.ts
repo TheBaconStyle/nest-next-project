@@ -1,9 +1,3 @@
-import { UpdateFacilityDto } from './../dto/update-facility.dto'
-import { Facility } from './../entities/facilities.entity'
-import { FindMany } from './../../shared/types/database.type'
-import { configureMulter } from 'src/shared/utils/multer.helper'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { ImageMimeTypes } from './../../shared/utils/multer.helper'
 import {
   BadRequestException,
   Body,
@@ -15,16 +9,23 @@ import {
   Patch,
   Post,
   Query,
+  Render,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { unlink } from 'fs/promises'
+import { configureMulter } from 'src/shared/utils/multer.helper'
+import { PermissionGuard } from '../auth/guards/permission.guard'
 import { CategoriesService } from '../categories/categories.service'
-import { CreateFacilityDto } from '../dto/create-facility.dto'
+import { FindMany } from './../../shared/types/database.type'
+import { ImageMimeTypes } from './../../shared/utils/multer.helper'
+import { CreateFacilityDto } from './dto/create-facility.dto'
+import { UpdateFacilityDto } from './dto/update-facility.dto'
+import { Facility } from '../entities/facilities.entity'
 import { FacilitiesService } from './facilities.service'
-import { PermissionGuard } from '../guards/permission.guard'
 
 @ApiTags('facilities')
 @Controller('facilities')
@@ -34,7 +35,7 @@ export class FacilitiesController {
     private readonly categoriesService: CategoriesService,
   ) {}
 
-  @Post()
+  @Post('/api')
   @UseGuards(PermissionGuard(['canAddFacilities']))
   @UseInterceptors(
     FileInterceptor(
@@ -65,7 +66,7 @@ export class FacilitiesController {
     return 'Created new facility'
   }
 
-  @Get()
+  @Get('/api')
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'id', required: false, type: String })
   @ApiQuery({ name: 'category', required: false, type: String })
@@ -92,7 +93,7 @@ export class FacilitiesController {
     return await this.facilitiesService.find(findData)
   }
 
-  @Patch()
+  @Patch('/api')
   @UseGuards(PermissionGuard(['canEditFacilities']))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
@@ -128,7 +129,7 @@ export class FacilitiesController {
     return 'Updated facility'
   }
 
-  @Delete()
+  @Delete('/api')
   @UseGuards(PermissionGuard(['canDeleteFacilities']))
   async delete(@Query('id') id: string) {
     if (!id)
@@ -140,4 +141,8 @@ export class FacilitiesController {
     await this.facilitiesService.delete(facility)
     return 'Facility deleted'
   }
+
+  @Render('facilities/facilities')
+  @Get()
+  async ewq() {}
 }

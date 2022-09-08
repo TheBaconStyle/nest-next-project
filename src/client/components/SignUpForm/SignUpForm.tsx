@@ -1,14 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { AiOutlineUserAdd } from 'react-icons/ai'
 import { SignUpSchema } from 'src/shared/schema/signup.schema'
 import { ApiClient } from 'src/shared/utils/api-client.util'
 import * as yup from 'yup'
-import styles from '../../styles/form.module.scss'
+import styles from '../../styles/AuthForm.module.scss'
 
 type SignUpFields = yup.InferType<typeof SignUpSchema>
 
 export function SignUpForm() {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -21,8 +23,13 @@ export function SignUpForm() {
     resolver: yupResolver(SignUpSchema),
   })
   async function submitHandler(data: SignUpFields) {
-    delete data.confirmation
-    await ApiClient.post('/auth/api/signup', data)
+    try {
+      delete data.confirmation
+      await ApiClient.post('/auth/api/signup', data)
+      router.push('/auth/signin')
+    } catch (e) {
+      console.log(e)
+    }
   }
   return (
     <form

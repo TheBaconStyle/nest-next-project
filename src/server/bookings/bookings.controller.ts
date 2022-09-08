@@ -1,5 +1,5 @@
 import { FindMany } from './../../shared/types/database.type'
-import { Booking } from './../entities/bookings.entity'
+import { Booking } from '../entities/bookings.entity'
 import {
   BadRequestException,
   Body,
@@ -17,10 +17,10 @@ import {
 import { ApiQuery, ApiTags } from '@nestjs/swagger'
 import dayjs from 'dayjs'
 import { User } from 'src/server/entities/users.entity'
-import { ReqUser } from '../decorators/request-user.decorator'
+import { CurrentUser } from '../decorators/request-user.decorator'
 import { FacilitiesService } from '../facilities/facilities.service'
-import { AuthorizeGuard } from '../guards/authorize.guard'
-import { CreateBookDto } from './../dto/create-booking.dto'
+import { AuthorizeGuard } from '../auth/guards/authorize.guard'
+import { CreateBookDto } from './create-booking.dto'
 import { BookingsService } from './bookings.service'
 import { Equal, IsNull, LessThanOrEqual, MoreThanOrEqual, Not } from 'typeorm'
 
@@ -37,7 +37,7 @@ export class BookingsController {
   @UseInterceptors(ClassSerializerInterceptor)
   async create(
     @Body() { facility, from, to }: CreateBookDto,
-    @ReqUser() user: User,
+    @CurrentUser() user: User,
   ) {
     const facilityVariant = this.facilitiesService.findOne({
       id: facility,
@@ -67,7 +67,7 @@ export class BookingsController {
     @Query('owner', ParseBoolPipe) forOwner: boolean,
     @Query('page', ParseIntPipe) page: number,
     @Query('size', ParseIntPipe) size: number,
-    @ReqUser() user: User,
+    @CurrentUser() user: User,
   ) {
     const findData: FindMany<Booking>['where'] = {
       facility: Not(IsNull()),

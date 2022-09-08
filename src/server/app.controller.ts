@@ -1,20 +1,16 @@
-import { AuthorizeGuard } from './guards/authorize.guard'
-import { Controller, Get, Render, UseGuards } from '@nestjs/common'
+import { Controller, Get, Render } from '@nestjs/common'
 import { ApiExcludeController } from '@nestjs/swagger'
+import { CurrentUser } from './decorators/request-user.decorator'
+import { User } from './entities/users.entity'
 
 @ApiExcludeController()
 @Controller()
 export class AppController {
-  @Render('Index')
+  @Render('home')
   @Get()
-  getHello() {}
-
-  @Render('Profile')
-  @UseGuards(AuthorizeGuard)
-  @Get('profile')
-  async qwe() {}
-
-  @Render('facilities/facilities')
-  @Get('new')
-  async ewq() {}
+  getHello(@CurrentUser() user: User) {
+    return {
+      user: user ? user.login : null,
+    }
+  }
 }

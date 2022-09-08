@@ -1,0 +1,17 @@
+.preloader {
+  @apply fixed h-full w-full z-50 bg-slate-50 flex items-center justify-center;
+  &_icon {
+    @apply w-16 h-16 text-slate-700;
+    animation-name: spin;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

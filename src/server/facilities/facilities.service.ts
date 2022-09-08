@@ -6,7 +6,7 @@ import {
   PartialFields,
   RequiredFields,
 } from './../../shared/types/database.type'
-import { Facility } from './../entities/facilities.entity'
+import { Facility } from '../entities/facilities.entity'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'

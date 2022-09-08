@@ -1,7 +1,7 @@
 import { BasicFilter } from './../filters/basic.filter'
 import { User } from '../entities/users.entity'
-import { UpdateRoleDto } from '../dto/update-role.dto'
-import { CreateRoleDto } from '../dto/create-role.dto'
+import { UpdateRoleDto } from './dto/update-role.dto'
+import { CreateRoleDto } from './dto/create-role.dto'
 import { RolesService } from './roles.service'
 import {
   Controller,
@@ -19,7 +19,7 @@ import { ParseIntPipe } from '@nestjs/common'
 import { FindMany } from 'src/shared/types/database.type'
 import { Role } from '../entities/roles.entity'
 import { ApiQuery, ApiTags } from '@nestjs/swagger'
-import { ReqUser } from '../decorators/request-user.decorator'
+import { CurrentUser } from '../decorators/request-user.decorator'
 
 @ApiTags('roles')
 @UseFilters(BasicFilter)
@@ -69,7 +69,7 @@ export class RolesController {
   async update(
     @Query('id') id: string,
     @Body() changes: UpdateRoleDto,
-    @ReqUser() user: User,
+    @CurrentUser() user: User,
   ) {
     if (!id || !changes) throw new BadRequestException("Can't update role!")
     const myRoles = await user.roles

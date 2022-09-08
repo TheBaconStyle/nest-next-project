@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  Render,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -16,13 +17,13 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { configureMulter } from 'src/shared/utils/multer.helper'
-import { AuthorizeGuard } from '../guards/authorize.guard'
-import { PermissionGuard } from '../guards/permission.guard'
+import { AuthorizeGuard } from '../auth/guards/authorize.guard'
+import { PermissionGuard } from '../auth/guards/permission.guard'
 import { FindMany } from './../../shared/types/database.type'
 import { ImageMimeTypes } from './../../shared/utils/multer.helper'
-import { CreateCategoryDto } from './../dto/create-category.dto'
-import { UpdateCategoryDto } from './../dto/update-category.dto'
-import { Category } from './../entities/categories.entity'
+import { CreateCategoryDto } from './dto/create-category.dto'
+import { UpdateCategoryDto } from './dto/update-category.dto'
+import { Category } from '../entities/categories.entity'
 import { CategoriesService } from './categories.service'
 
 @ApiTags('categories')
@@ -31,7 +32,7 @@ import { CategoriesService } from './categories.service'
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Post()
+  @Post('/api')
   @UseGuards(PermissionGuard(['canAddCategories']))
   @UseInterceptors(
     FileInterceptor(
@@ -53,7 +54,7 @@ export class CategoriesController {
     return 'Created new category'
   }
 
-  @Get()
+  @Get('/api')
   @ApiQuery({ name: 'name', required: false, type: String })
   @ApiQuery({ name: 'id', required: false, type: String })
   @ApiQuery({ name: 'page', required: true, type: Number })
@@ -78,7 +79,7 @@ export class CategoriesController {
     return await this.categoriesService.find(findData)
   }
 
-  @Patch()
+  @Patch('/api')
   @UseGuards(PermissionGuard(['canEditCategories']))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
@@ -107,7 +108,7 @@ export class CategoriesController {
     return 'Category updated '
   }
 
-  @Delete()
+  @Delete('/api')
   @UseGuards(PermissionGuard(['canDeleteCategories']))
   async delete(@Query('id') id: string) {
     if (!id)
@@ -119,4 +120,8 @@ export class CategoriesController {
     await this.categoriesService.delete(category)
     return 'Category deleted'
   }
+
+  @Render('categories')
+  @Get()
+  async categoriesPage() {}
 }

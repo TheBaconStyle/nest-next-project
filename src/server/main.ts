@@ -33,7 +33,7 @@ async function bootstrap() {
   const db = await new DataSource({
     type: 'sqlite',
     database: join(cwd(), 'database', 'data.db'),
-    synchronize: true,
+    synchronize: config.get<string>('NODE_ENV') !== 'production',
     entities: [Session],
   }).initialize()
   const repo = db.getRepository(Session)
