@@ -10,7 +10,7 @@
     "**/.yarn": true,
     "**/.next": false,
     "**/dist": true,
-    "**/database": true,
+    "**/database": false,
     "**/migrations": true
   },
   "files.eol": "\n",

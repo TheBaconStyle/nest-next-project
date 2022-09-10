@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { ReactNode } from 'react'
 import styles from './Card.module.scss'
 
@@ -12,7 +13,13 @@ export function Card({ img, title, description, body }: CardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.img}>
-        <img src={img ?? '/public/assets/beholder.jpg'} loading="lazy" />
+        <Image
+          src={img ?? '/public/assets/beholder.jpg'}
+          layout="fill"
+          unoptimized
+          draggable={false}
+          priority
+        />
       </div>
       <div className={styles.body}>
         {!body && (

@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common'
+import { forwardRef, Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -31,6 +31,8 @@ import { UsersModule } from './users/users.module'
           cleanDistDir: true,
           useFileSystemPublicRoutes: false,
           reactStrictMode: true,
+          // assetPrefix: 'http://localhost:3000',
+          // images: { loader: 'custom', path: 'http://localhost:3000/' },
         },
         dev: process.env.NODE_ENV !== 'production',
         customServer: true,
@@ -66,12 +68,12 @@ import { UsersModule } from './users/users.module'
         }
       },
     }),
-    AuthModule,
-    UsersModule,
-    RolesModule,
-    BookingsModule,
-    CategoriesModule,
-    FacilitiesModule,
+    forwardRef(() => AuthModule),
+    forwardRef(() => UsersModule),
+    forwardRef(() => RolesModule),
+    forwardRef(() => BookingsModule),
+    forwardRef(() => CategoriesModule),
+    forwardRef(() => FacilitiesModule),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -16,6 +16,7 @@ export class AuthenticateStrategy extends PassportStrategy(
   }
   static key = AUTHENTICATE
   async validate(req: Request<any, any, SignInDto>) {
+    console.log(req.body)
     const user = await this.authService.authenticateUser(req.body)
     if (!user) {
       throw new UnauthorizedException()

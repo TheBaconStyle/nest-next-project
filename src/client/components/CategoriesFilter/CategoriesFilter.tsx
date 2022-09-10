@@ -1,6 +1,7 @@
-import { Category } from 'src/server/entities'
 import { Card } from '../Card'
 import styles from './CategoriesFilter.module.scss'
+import Link from 'next/link'
+import { Category } from 'src/server/entities'
 
 export interface CategoriesFilterProps {
   categories?: Category[]
@@ -14,11 +15,18 @@ export function CategoriesFilter({ categories }: CategoriesFilterProps) {
         {categories && (
           <>
             {categories.map((category) => (
-              <Card
-                img={category.img}
+              <Link
+                href={`/categories/${category.id}`}
                 key={category.id}
-                title={category.name}
-              />
+                passHref
+              >
+                <a>
+                  <Card
+                    img={`/public/categories/${category.img}`}
+                    title={category.name}
+                  />
+                </a>
+              </Link>
             ))}
           </>
         )}

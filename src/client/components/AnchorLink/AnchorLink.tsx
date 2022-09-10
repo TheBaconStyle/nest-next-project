@@ -5,7 +5,7 @@ import { useIsClient } from 'usehooks-ts'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
-interface AnchorLinkProps {
+export interface AnchorLinkProps {
   className?: string
   activeClass?: string
   href: string
@@ -25,7 +25,6 @@ export function AnchorLink(props: AnchorLinkProps) {
           [props.activeClass ?? 'active']: isActive && isClient,
         })}
         draggable={false}
-        whileTap={{ scale: 0.98 }}
       >
         {props.children}
       </motion.a>

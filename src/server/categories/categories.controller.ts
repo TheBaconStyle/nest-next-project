@@ -5,6 +5,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   ParseIntPipe,
   Patch,
   Post,
@@ -15,7 +16,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger'
+import {
+  ApiConsumes,
+  ApiExcludeEndpoint,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 import { configureMulter } from 'src/shared/utils/multer.helper'
 import { AuthorizeGuard } from '../auth/guards/authorize.guard'
 import { PermissionGuard } from '../auth/guards/permission.guard'
@@ -25,12 +31,19 @@ import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
 import { Category } from '../entities/categories.entity'
 import { CategoriesService } from './categories.service'
+import { CurrentUser } from '../decorators/request-user.decorator'
+import { User } from '../entities'
+import { IsNull, Not } from 'typeorm'
+import { FacilitiesService } from '../facilities/facilities.service'
 
 @ApiTags('categories')
 @UseGuards(AuthorizeGuard)
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    private readonly categoriesService: CategoriesService,
+    private readonly facilitiesService: FacilitiesService,
+  ) {}
 
   @Post('/api')
   @UseGuards(PermissionGuard(['canAddCategories']))
@@ -121,7 +134,30 @@ export class CategoriesController {
     return 'Category deleted'
   }
 
+  @ApiExcludeEndpoint()
   @Render('categories')
   @Get()
-  async categoriesPage() {}
+  async categoriesPage(@CurrentUser() user: User) {
+    const categories = await this.categoriesService.find({
+      where: { id: Not(IsNull()) },
+      skip: 0,
+      take: 10,
+    })
+    return { user: user.login, categories: JSON.stringify(categories) }
+  }
+
+  @ApiExcludeEndpoint()
+  @Render('facilities')
+  @Get('/:category')
+  async facilitiesPage(
+    @CurrentUser() user: User,
+    @Param('category') id: string,
+  ) {
+    const facilities = await this.facilitiesService.find({
+      where: { category: { id } },
+      skip: 0,
+      take: 10,
+    })
+    return { user: user.login, facilities: JSON.stringify(facilities) }
+  }
 }

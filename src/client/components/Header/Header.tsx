@@ -1,19 +1,16 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import React, { useEffect } from 'react'
-import {
-  FiMenu,
-  FiUser,
-  FiUserCheck,
-  FiUserPlus,
-  FiUserX,
-} from 'react-icons/fi'
-import { BasePageProps } from 'src/shared/types/page.type'
+import { FiMenu, FiUser, FiUserX, FiX } from 'react-icons/fi'
 import { useBoolean, useIsClient, useMediaQuery } from 'usehooks-ts'
+import { authorizedRoots } from './authorizedRoots'
+import { unauthorizedRoots } from './unauthorizedRoots'
 import { AnchorLink } from '../AnchorLink'
 import { Progress } from '../Progress'
 import styles from './Header.module.scss'
 
-export interface HeaderProps extends BasePageProps {}
+export interface HeaderProps {
+  user: string
+}
 
 export function Header({ user }: HeaderProps) {
   const {
@@ -42,7 +39,39 @@ export function Header({ user }: HeaderProps) {
             onClick={handleMenuButtonClick}
             whileTap={{ scale: 0.95 }}
           >
-            <FiMenu className={styles.navbar_collapse_toggler_icon} />
+            <AnimatePresence exitBeforeEnter initial={false}>
+              {isMenuVisible ? (
+                <motion.div
+                  initial={{
+                    scale: 1.5,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    scale: 1,
+                    opacity: 1,
+                  }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  key={'close'}
+                >
+                  <FiX className={styles.navbar_collapse_toggler_icon} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{
+                    scale: 1.5,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    scale: 1,
+                    opacity: 1,
+                  }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  key={'open'}
+                >
+                  <FiMenu className={styles.navbar_collapse_toggler_icon} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.button>
         )}
         <motion.div
@@ -53,33 +82,37 @@ export function Header({ user }: HeaderProps) {
           <div className={styles.navbar_collapse_item_wrapper}>
             {!user && (
               <>
-                <AnchorLink
-                  className={styles.navbar_collapse_item}
-                  activeClass={styles.active}
-                  href="/auth/signin"
-                >
-                  <FiUserCheck className={styles.navbar_collapse_item_icon} />{' '}
-                  signin
-                </AnchorLink>
-                <AnchorLink
-                  className={styles.navbar_collapse_item}
-                  activeClass={styles.active}
-                  href="/auth/signup"
-                >
-                  <FiUserPlus className={styles.navbar_collapse_item_icon} />
-                  signup
-                </AnchorLink>
+                {unauthorizedRoots.map((root) => (
+                  <AnchorLink
+                    className={styles.navbar_collapse_item}
+                    activeClass={styles.active}
+                    href={root.href}
+                    key={root.href}
+                  >
+                    {root.label}
+                  </AnchorLink>
+                ))}
               </>
             )}
             {user && (
               <>
+                {authorizedRoots.map((root) => (
+                  <AnchorLink
+                    className={styles.navbar_collapse_item}
+                    activeClass={styles.active}
+                    href={root.href}
+                    key={root.href}
+                  >
+                    {root.label}
+                  </AnchorLink>
+                ))}
                 <AnchorLink
                   className={styles.navbar_collapse_item}
                   activeClass={styles.active}
                   href="/user/profile"
                 >
                   <FiUser className={styles.navbar_collapse_item_icon} />
-                  {user}
+                  Профиль: <strong>{user}</strong>
                 </AnchorLink>
                 <AnchorLink
                   className={styles.navbar_collapse_item}
@@ -87,7 +120,7 @@ export function Header({ user }: HeaderProps) {
                   href="/auth/api/signout"
                 >
                   <FiUserX className={styles.navbar_collapse_item_icon} />
-                  signout
+                  Выйти
                 </AnchorLink>
               </>
             )}

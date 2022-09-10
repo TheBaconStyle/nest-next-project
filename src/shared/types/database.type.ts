@@ -13,7 +13,8 @@ export type FindOne<T = any> = FindOneOptions<T>['where']
 export type PageOptions = Pick<FindManyOptions, 'skip' | 'take'>
 
 export type FindMany<T = any> = {
-  where: FindManyOptions<T>['where']
+  select?: FindManyOptions<T>['select']
+  where?: FindManyOptions<T>['where']
 } & PageOptions
 
 export type OneOrMany<T = any> = T | T[]

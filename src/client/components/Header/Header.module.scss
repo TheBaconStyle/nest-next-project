@@ -9,7 +9,7 @@
   &_collapse {
     @apply mt-2 lg:mt-0 w-full lg:w-fit ml-auto mr-4 my-auto overflow-hidden;
     &_toggler {
-      @apply rounded border-2 border-slate-200 px-1;
+      @apply rounded border-2 border-slate-200 px-1 overflow-hidden;
       &_icon {
         @apply h-9 w-9 text-slate-600;
       }

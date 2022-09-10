@@ -1,5 +1,5 @@
 import { AuthorizeStrategy } from './authorize.strategy'
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Session } from '../entities/sessions.entity'
@@ -14,8 +14,8 @@ import { SessionSerializer } from './session.serializer'
   imports: [
     PassportModule.register({ session: true }),
     TypeOrmModule.forFeature([Session]),
-    UsersModule,
-    RolesModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => RolesModule),
   ],
   providers: [
     AuthService,
