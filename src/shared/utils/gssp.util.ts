@@ -1,8 +1,6 @@
-import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { GetServerSideProps } from 'next'
 
-export const gssp: GetServerSideProps = async <T>(
-  context,
-): Promise<GetServerSidePropsResult<T>> => {
+export const gssp: GetServerSideProps = async (context) => {
   const { query: props } = context
   return { props }
 }

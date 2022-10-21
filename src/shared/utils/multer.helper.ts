@@ -29,7 +29,7 @@ export function fileMimetypeFilter(mimeTypes: string[]) {
   return function (
     _req: Request,
     file: Express.Multer.File,
-    callback: (err, acceptFile: boolean) => void,
+    callback: (_err: any, acceptFile: boolean) => void,
   ) {
     if (mimeTypes.includes(file.mimetype)) {
       return callback(null, true)
