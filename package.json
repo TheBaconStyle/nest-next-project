@@ -10,7 +10,7 @@
     "build": "yarn build:next && yarn build:nest && yarn migrations:generate && yarn migrations:run",
     "build:next": "next build",
     "build:nest": "nest build --path ./tsconfig.build.json",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/server/main",
@@ -47,6 +47,7 @@
     "connect-typeorm": "^2.0.0",
     "csurf": "^1.11.0",
     "dayjs": "^1.11.4",
+    "express": "^4.18.1",
     "express-rate-limit": "^6.5.1",
     "express-session": "^1.17.3",
     "framer-motion": "^7.1.0",
@@ -92,6 +93,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "@typescript-eslint/typescript-estree": "^5.38.1",
     "autoprefixer": "^10.4.8",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
@@ -108,7 +110,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "4.0.0",
-    "typescript": "^4.3.5",
+    "typescript": "<4.8",
     "typescript-plugin-css-modules": "^3.4.0"
   },
   "jest": {
