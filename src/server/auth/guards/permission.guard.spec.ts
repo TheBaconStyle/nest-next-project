@@ -1,7 +1,7 @@
-import { PermissionGuard } from './permission.guard'
+import {PermissionGuard} from './permission.guard'
 
 describe('PermissionGuard', () => {
   it('should be defined', () => {
-    expect(new PermissionGuard()).toBeDefined()
+    expect(PermissionGuard).toBeDefined()
   })
 })
