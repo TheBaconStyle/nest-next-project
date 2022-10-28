@@ -1,10 +1,10 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { AiOutlineUserAdd } from 'react-icons/ai'
-import { SignInSchema } from 'src/shared/schema/signin.schema'
-import { ApiClient } from 'src/shared/utils/api-client.util'
+import {yupResolver} from '@hookform/resolvers/yup'
+import {useRouter} from 'next/router'
+import {useCallback} from 'react'
+import {useForm} from 'react-hook-form'
+import {AiOutlineUserAdd} from 'react-icons/ai'
+import {SignInSchema} from 'src/shared/schema/signin.schema'
+import {ApiClient} from 'src/shared/utils/api-client.util'
 import * as yup from 'yup'
 import styles from '../../styles/AuthForm.module.scss'
 
@@ -14,35 +14,36 @@ export function SignInForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
+    setError,
+    // clearErrors,
   } = useForm<SignInFields>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     resolver: yupResolver(SignInSchema),
   })
-  const [userAgent, setUserAgent] = useState<string>()
-  useEffect(() => {
-    setUserAgent(window.navigator.userAgent)
-  }, [])
   const router = useRouter()
-  const submitHandler = useCallback(
-    async (data: SignInFields) => {
-      try {
-        await ApiClient.post('/auth/api/signin', data)
-        router.push('/')
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    [userAgent],
-  )
+  const submitHandler = useCallback(async (data: SignInFields) => {
+    try {
+      await ApiClient.post('/api/auth/signin', data)
+      await router.push('/')
+    } catch (e) {
+      setError(
+        'login',
+        {message: 'Ошибка неверный логин или пароль'},
+        {shouldFocus: true},
+      )
+    }
+  }, [])
   return (
     <form
       onSubmit={handleSubmit(submitHandler, console.log)}
       className={styles.form}
     >
       <div className={styles.form_title}>Аутентификация</div>
-
+      {errors.login && (
+        <div className={styles.form_error}>{errors.login?.message}</div>
+      )}
       <div>
         <input
           type="text"
@@ -59,8 +60,12 @@ export function SignInForm() {
           placeholder="Пароль"
         />
       </div>
-      <button type="submit" className={styles.form_submit}>
-        <AiOutlineUserAdd />
+      <button
+        type="submit"
+        className={styles.form_submit}
+        disabled={Boolean(errors.login)}
+      >
+        <AiOutlineUserAdd/>
         Войти
       </button>
     </form>
