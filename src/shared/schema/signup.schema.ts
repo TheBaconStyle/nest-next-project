@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+
 export const SignUpSchema = yup
   .object({
     email: yup
@@ -18,7 +19,7 @@ export const SignUpSchema = yup
       .string()
       .min(8, 'Пароль не может быть короче 8-и символов')
       .matches(
-        /[\\\/\|\[\]\{\}^%$#@&~!?`'":;\.,*()\-\+=]+/gi,
+        /[\\\/|\[\]{}^%$#@&~!?`'":;.,*()-+=]+/gi,
         'Пароль должен включать в себя хотя бы один спецсимввол',
       )
       .matches(
@@ -29,6 +30,7 @@ export const SignUpSchema = yup
       .required('Пароль не может быть пустым'),
     confirmation: yup
       .string()
+      .required('Пароли должны совпадать')
       .oneOf([yup.ref('password'), null], 'Пароли должны совпадать'),
   })
   .required()
