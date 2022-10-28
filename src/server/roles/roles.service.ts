@@ -1,20 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Role } from '../entities/roles.entity'
-import {
-  FindMany,
-  FindOne,
-  OneOrMany,
-  RequiredFields,
-  UnmutableFields,
-} from 'src/shared/types/database.type'
-import { Repository } from 'typeorm'
+import {BadRequestException, Injectable} from '@nestjs/common'
+import {InjectRepository} from '@nestjs/typeorm'
+import {Role} from '../entities'
+import {FindMany, FindOne, OneOrMany, RequiredFields, UnmutableFields,} from 'src/shared/types/database.type'
+import {Repository} from 'typeorm'
 
 @Injectable()
 export class RolesService {
   constructor(
     @InjectRepository(Role) private readonly rolesRepo: Repository<Role>,
-  ) {}
+  ) {
+  }
 
   async create(roleDto: RequiredFields<Role, 'name'>) {
     const variant = await this.rolesRepo.findOne({
@@ -28,25 +23,25 @@ export class RolesService {
     const role = new Role(roleDto)
     role.priority = basicRole.priority
     await this.rolesRepo.update(
-      { id: basicRole.id },
-      { priority: basicRole.priority + 1 },
+      {id: basicRole.id},
+      {priority: basicRole.priority + 1},
     )
     return await this.rolesRepo.save(role)
   }
 
   async findOne(findData: FindOne<Role>) {
-    return await this.rolesRepo.findOne({ where: findData })
+    return await this.rolesRepo.findOneOrFail({where: findData})
   }
 
   async find(findData: FindMany<Role>) {
     return await this.rolesRepo.find({
       ...findData,
-      order: { priority: 'ASC' },
+      order: {priority: 'ASC'},
     })
   }
 
   async update(id: string, opts: UnmutableFields<Role, 'id'>) {
-    return await this.rolesRepo.update({ id }, opts)
+    return await this.rolesRepo.update({id}, opts)
   }
 
   async delete(roles: OneOrMany<Role>) {
@@ -61,7 +56,7 @@ export class RolesService {
 
   async createRootRole() {
     const variant = await this.rolesRepo.findOne({
-      where: { name: 'root'.toUpperCase() },
+      where: {name: 'root'.toUpperCase()},
     })
     if (variant) return variant
     const rootRole = new Role({
@@ -93,13 +88,13 @@ export class RolesService {
       canEditUsers: true,
       canDeleteUsers: true,
     })
-    console.log('created root role')
+    console.log('root role created')
     return await this.rolesRepo.save(rootRole)
   }
 
   async createBasicRole() {
     const variant = await this.rolesRepo.findOne({
-      where: { name: 'basic'.toUpperCase() },
+      where: {name: 'basic'.toUpperCase()},
     })
     if (variant) return variant
     const minPriority = await this.findMinPriority()
@@ -115,7 +110,7 @@ export class RolesService {
   async findMinPriority() {
     const minRole = await this.rolesRepo.findOne({
       where: {},
-      order: { priority: 'DESC' },
+      order: {priority: 'DESC'},
     })
     return minRole ? minRole.priority : 1
   }
@@ -123,20 +118,20 @@ export class RolesService {
   async findMaxPriority() {
     const maxRole = await this.rolesRepo.findOne({
       where: {},
-      order: { priority: 'ASC' },
+      order: {priority: 'ASC'},
     })
     return maxRole ? maxRole.priority : 0
   }
 
   async getRootRole() {
-    return await this.rolesRepo.findOne({
-      where: { name: 'root'.toUpperCase() },
+    return await this.rolesRepo.findOneOrFail({
+      where: {name: 'root'.toUpperCase()},
     })
   }
 
   async getBasicRole() {
-    return await this.rolesRepo.findOne({
-      where: { name: 'basic'.toUpperCase() },
+    return await this.rolesRepo.findOneOrFail({
+      where: {name: 'basic'.toUpperCase()},
     })
   }
 }
