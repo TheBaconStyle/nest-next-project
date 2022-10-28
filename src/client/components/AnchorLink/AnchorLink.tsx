@@ -1,30 +1,28 @@
 import classNames from 'classnames'
-import { useRouter } from 'next/router'
-import { ReactNode } from 'react'
-import { useIsClient } from 'usehooks-ts'
-import { motion } from 'framer-motion'
+import {motion} from 'framer-motion'
 import Link from 'next/link'
+import {useRouter} from 'next/router'
+import {MouseEvent} from 'react'
+import {BaseComponentProps} from 'src/shared/types/component.type'
 
-export interface AnchorLinkProps {
+export interface AnchorLinkProps extends BaseComponentProps {
   className?: string
   activeClass?: string
   href: string
-  children?: ReactNode
 }
 
 export function AnchorLink(props: AnchorLinkProps) {
   const router = useRouter()
-  const isSameRoot = props.href === router.asPath
-  const isActive =
-    props.href === router.asPath || `${props.href}#` === router.asPath
-  const isClient = useIsClient()
+  const isActive = router.asPath === props.href
+  const activeClassName = props.activeClass ?? 'active'
   return (
-    <Link href={!isSameRoot ? props.href : '#'} passHref soft replace>
+    <Link href={props.href} passHref>
       <motion.a
-        className={classNames(props.className, {
-          [props.activeClass ?? 'active']: isActive && isClient,
-        })}
+        onClick={(e: MouseEvent) => isActive && e.preventDefault()}
         draggable={false}
+        className={classNames(props.className, {
+          [activeClassName]: isActive,
+        })}
       >
         {props.children}
       </motion.a>
