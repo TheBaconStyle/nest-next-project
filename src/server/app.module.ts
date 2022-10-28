@@ -1,28 +1,22 @@
-import { forwardRef, Global, Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { ServeStaticModule } from '@nestjs/serve-static'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { RenderModule } from 'nest-next'
+import {forwardRef, Module} from '@nestjs/common'
+import {ConfigModule, ConfigService} from '@nestjs/config'
+import {ServeStaticModule} from '@nestjs/serve-static'
+import {TypeOrmModule} from '@nestjs/typeorm'
+import {RenderModule} from 'nest-next'
 import next from 'next'
-import { join } from 'path'
-import { cwd } from 'process'
-import { envSchema } from 'src/shared/schema/env.schema'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { AuthModule } from './auth/auth.module'
-import { Session } from './entities/sessions.entity'
-import { Booking } from './entities/bookings.entity'
-import { BookingsModule } from './bookings/bookings.module'
-import { Category } from './entities/categories.entity'
-import { CategoriesModule } from './categories/categories.module'
-import { Facility } from './entities/facilities.entity'
-import { FacilitiesModule } from './facilities/facilities.module'
-import { Role } from './entities/roles.entity'
-import { RolesModule } from './roles/roles.module'
-import { User } from './entities/users.entity'
-import { UsersModule } from './users/users.module'
+import {join} from 'path'
+import {cwd} from 'process'
+import {envSchema} from 'src/shared/schema/env.schema'
+import {AppController} from './app.controller'
+import {AppService} from './app.service'
+import {AuthModule} from './auth/auth.module'
+import {BookingsModule} from './bookings/bookings.module'
+import {CategoriesModule} from './categories/categories.module'
+import {Booking, Category, Facility, Role, Session, User} from './entities'
+import {FacilitiesModule} from './facilities/facilities.module'
+import {RolesModule} from './roles/roles.module'
+import {UsersModule} from './users/users.module'
 
-@Global()
 @Module({
   imports: [
     RenderModule.forRootAsync(
@@ -31,13 +25,18 @@ import { UsersModule } from './users/users.module'
           cleanDistDir: true,
           useFileSystemPublicRoutes: false,
           reactStrictMode: true,
-          // assetPrefix: 'http://localhost:3000',
-          // images: { loader: 'custom', path: 'http://localhost:3000/' },
+          assetPrefix: 'http://localhost:3000',
+          compress: true,
+          swcMinify: true,
+          devIndicators: {buildActivity: false},
         },
         dev: process.env.NODE_ENV !== 'production',
         customServer: true,
       }),
-      { dev: process.env.NODE_ENV !== 'production' },
+      {
+        dev: process.env.NODE_ENV !== 'production',
+        passthrough404: true,
+      },
     ),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -68,14 +67,15 @@ import { UsersModule } from './users/users.module'
         }
       },
     }),
-    forwardRef(() => AuthModule),
     forwardRef(() => UsersModule),
     forwardRef(() => RolesModule),
     forwardRef(() => BookingsModule),
     forwardRef(() => CategoriesModule),
     forwardRef(() => FacilitiesModule),
+    forwardRef(() => AuthModule),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}
