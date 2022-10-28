@@ -1,16 +1,23 @@
 .form {
-  @apply flex flex-col h-full my-auto mx-auto p-2;
+  @apply flex flex-col h-full my-auto mx-auto p-2 w-[calc(100%/2)] md:w-[calc(100%/3)] lg:w-[calc(100%/4)] max-w-[300px] min-w-[200px] box-content;
+
+  &_error {
+    @apply mb-2 text-red-500 bg-slate-100 rounded p-2 w-full break-words;
+  }
+
   &_group {
     &_input {
-      @apply border-2 p-2 outline-none mb-2 text-lg rounded-md;
+      @apply border-2 p-2 outline-none mb-2 text-lg rounded-md w-full;
     }
   }
+
   &_submit {
     @apply p-3 bg-slate-400 text-slate-50 rounded-md text-lg flex items-center gap-1 hover:bg-slate-500 transition;
     &_icon {
       @apply inline-block w-7 h-7;
     }
   }
+
   &_title {
     @apply text-2xl mb-2 pl-2;
   }

@@ -1,13 +1,14 @@
-import { AppProps } from 'next/app'
-import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
-import { Preloader } from 'src/client/components/Preloader'
-import { useBoolean } from 'usehooks-ts'
+import {AppProps} from 'next/app'
+import {useRouter} from 'next/router'
+import {Suspense, useEffect} from 'react'
+import {AuthProvider} from 'src/client/components/Auth'
+import {Preloader} from 'src/client/components/Preloader'
+import {useBoolean} from 'usehooks-ts'
 import '../client/styles/global.scss'
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({Component, pageProps}: AppProps) {
   const router = useRouter()
-  const { setFalse, setTrue, value: isLoading } = useBoolean(false)
+  const {setFalse, setTrue, value: isLoading} = useBoolean(false)
   useEffect(() => {
     router.events.on('routeChangeStart', setTrue)
     router.events.on('routeChangeComplete', setFalse)
@@ -17,9 +18,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [])
   return (
-    <>
-      {isLoading && <Preloader />}
-      <Component {...pageProps} />
-    </>
+    <Suspense fallback={'Loading...'}>
+      <AuthProvider>
+        {isLoading && <Preloader/>}
+        <Component {...pageProps} />
+      </AuthProvider>
+    </Suspense>
   )
 }
