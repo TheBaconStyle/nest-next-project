@@ -5,47 +5,39 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
-  Render,
   UploadedFile,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
-import {
-  ApiConsumes,
-  ApiExcludeEndpoint,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger'
-import { configureMulter } from 'src/shared/utils/multer.helper'
-import { AuthorizeGuard } from '../auth/guards/authorize.guard'
-import { PermissionGuard } from '../auth/guards/permission.guard'
-import { FindMany } from './../../shared/types/database.type'
-import { ImageMimeTypes } from './../../shared/utils/multer.helper'
-import { CreateCategoryDto } from './dto/create-category.dto'
-import { UpdateCategoryDto } from './dto/update-category.dto'
-import { Category } from '../entities/categories.entity'
-import { CategoriesService } from './categories.service'
-import { CurrentUser } from '../decorators/request-user.decorator'
-import { User } from '../entities'
-import { IsNull, Not } from 'typeorm'
-import { FacilitiesService } from '../facilities/facilities.service'
+import {FileInterceptor} from '@nestjs/platform-express'
+import {ApiConsumes, ApiQuery, ApiTags} from '@nestjs/swagger'
+import {configureMulter} from 'src/shared/utils/multer.helper'
+import {AuthorizeGuard} from '../auth/guards/authorize.guard'
+import {PermissionGuard} from '../auth/guards/permission.guard'
+import {Category} from '../entities'
+import {BasicFilter} from '../filters/basic.filter'
+import {FindMany} from '../../shared/types/database.type'
+import {ImageMimeTypes} from '../../shared/utils/multer.helper'
+import {CategoriesService} from './categories.service'
+import {CreateCategoryDto} from './dto/create-category.dto'
+import {UpdateCategoryDto} from './dto/update-category.dto'
 
 @ApiTags('categories')
-@UseGuards(AuthorizeGuard)
-@Controller('categories')
+@UseGuards(AuthorizeGuard, PermissionGuard(['haveCategoriesAccess']))
+@UseFilters(BasicFilter)
+@Controller('api/categories')
 export class CategoriesController {
   constructor(
     private readonly categoriesService: CategoriesService,
-    private readonly facilitiesService: FacilitiesService,
-  ) {}
+  ) {
+  }
 
-  @Post('/api')
+  @Post()
   @UseGuards(PermissionGuard(['canAddCategories']))
   @UseInterceptors(
     FileInterceptor(
@@ -63,21 +55,21 @@ export class CategoriesController {
     @Body() dto: CreateCategoryDto,
     @UploadedFile() img: Express.Multer.File,
   ) {
-    await this.categoriesService.create({ ...dto, img: img.path })
+    await this.categoriesService.create({...dto, img: img.path})
     return 'Created new category'
   }
 
-  @Get('/api')
-  @ApiQuery({ name: 'name', required: false, type: String })
-  @ApiQuery({ name: 'id', required: false, type: String })
-  @ApiQuery({ name: 'page', required: true, type: Number })
-  @ApiQuery({ name: 'size', required: true, type: Number })
+  @Get()
+  @ApiQuery({name: 'name', required: false, type: String})
+  @ApiQuery({name: 'id', required: false, type: String})
+  @ApiQuery({name: 'page', required: true, type: Number})
+  @ApiQuery({name: 'size', required: true, type: Number})
   @UseInterceptors(ClassSerializerInterceptor)
   async get(
     @Query('page', ParseIntPipe)
-    page: number,
+      page: number,
     @Query('size', ParseIntPipe)
-    size: number,
+      size: number,
     @Query('name') name?: string,
     @Query('id') id?: string,
   ) {
@@ -87,12 +79,12 @@ export class CategoriesController {
       take: size,
     }
     if (id || name) {
-      findData.where = [{ id }, { name }]
+      findData.where = [{id}, {name}]
     }
     return await this.categoriesService.find(findData)
   }
 
-  @Patch('/api')
+  @Patch()
   @UseGuards(PermissionGuard(['canEditCategories']))
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
@@ -112,7 +104,7 @@ export class CategoriesController {
     @UploadedFile() img: Express.Multer.File,
   ) {
     if (!id) throw new BadRequestException('Can not modify category without id')
-    const category = await this.categoriesService.findOne({ id })
+    const category = await this.categoriesService.findOne({id})
     if (!category) throw new BadRequestException('No category with this id')
     await this.categoriesService.update(category, {
       ...dto,
@@ -121,43 +113,16 @@ export class CategoriesController {
     return 'Category updated '
   }
 
-  @Delete('/api')
+  @Delete()
   @UseGuards(PermissionGuard(['canDeleteCategories']))
   async delete(@Query('id') id: string) {
     if (!id)
       throw new BadRequestException(
         'can not delete category without category id',
       )
-    const category = await this.categoriesService.findOne({ id })
+    const category = await this.categoriesService.findOne({id})
     if (!category) throw new BadRequestException('No categories with this id')
     await this.categoriesService.delete(category)
     return 'Category deleted'
-  }
-
-  @ApiExcludeEndpoint()
-  @Render('categories')
-  @Get()
-  async categoriesPage(@CurrentUser() user: User) {
-    const categories = await this.categoriesService.find({
-      where: { id: Not(IsNull()) },
-      skip: 0,
-      take: 10,
-    })
-    return { user: user.login, categories: JSON.stringify(categories) }
-  }
-
-  @ApiExcludeEndpoint()
-  @Render('facilities')
-  @Get('/:category')
-  async facilitiesPage(
-    @CurrentUser() user: User,
-    @Param('category') id: string,
-  ) {
-    const facilities = await this.facilitiesService.find({
-      where: { category: { id } },
-      skip: 0,
-      take: 10,
-    })
-    return { user: user.login, facilities: JSON.stringify(facilities) }
   }
 }
